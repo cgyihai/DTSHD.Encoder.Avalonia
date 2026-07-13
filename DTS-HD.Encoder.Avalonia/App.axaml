@@ -1,0 +1,29 @@
+<Application
+    x:Class="DTSHD.Encoder.Avalonia.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:fluentUi="using:AvaloniaFluentUI.Styling"
+    xmlns:local="using:DTSHD.Encoder.Avalonia"
+    xmlns:vm="using:DTSHD.Encoder.Avalonia.ViewModels"
+    RequestedThemeVariant="Default">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceInclude x:Key="Light" Source="avares://DTS-HD.Encoder.Avalonia/Themes/Light.axaml"/>
+                <ResourceInclude x:Key="Dark" Source="avares://DTS-HD.Encoder.Avalonia/Themes/Dark.axaml"/>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <!-- 一行注册整个 FluentAvalonia 主题（NavigationView/ContentDialog/ToolButton 等） -->
+        <fluentUi:FluentAvaloniaTheme/>
+        <!-- 卡片样式：与 WinUI3 版本一致的圆角描边卡片 -->
+        <StyleInclude Source="avares://DTS-HD.Encoder.Avalonia/Controls/CardStyle.axaml"/>
+    </Application.Styles>
+</Application>

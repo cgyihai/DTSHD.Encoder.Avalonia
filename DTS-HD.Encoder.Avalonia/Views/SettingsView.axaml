@@ -1,0 +1,103 @@
+<UserControl
+    x:Class="DTSHD.Encoder.Avalonia.Views.SettingsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:DTSHD.Encoder.Avalonia.ViewModels"
+    mc:Ignorable="d"
+    x:DataType="vm:SettingsPageViewModel">
+
+    <ScrollViewer Padding="32,8,32,24">
+        <StackPanel Spacing="16" HorizontalAlignment="Stretch">
+
+            <!-- 标题 -->
+            <StackPanel Spacing="2">
+                <TextBlock Text="设置" FontSize="28" FontWeight="SemiBold"/>
+                <TextBlock Text="配置工具集、许可证、外观与运行偏好。" Opacity="0.7"/>
+            </StackPanel>
+
+            <!-- ========== 引擎 ========== -->
+            <Border Classes="card">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="DTS-HD 引擎 (DtsJobQueue)" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="配置 GUI 调用原生引擎所需的 DTS-HD_Tool 目录。" Opacity="0.7"/>
+
+                    <!-- 工具集目录行 -->
+                    <Grid ColumnDefinitions="120,*,Auto" ColumnSpacing="10">
+                        <TextBlock Grid.Column="0" Text="工具集目录:" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Text="{Binding ToolDir, Mode=TwoWay}"/>
+                        <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseToolDirCommand}"/>
+                    </Grid>
+
+                    <!-- 状态行 -->
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                        <Grid Grid.Column="0" VerticalAlignment="Center">
+                            <Ellipse Width="12" Height="12" Fill="SeaGreen" IsVisible="{Binding ToolsetReady}"/>
+                            <Ellipse Width="12" Height="12" Fill="OrangeRed" IsVisible="{Binding !ToolsetReady}"/>
+                        </Grid>
+                        <TextBlock Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"
+                                   Text="{Binding StatusText}"/>
+                        <Button Grid.Column="2" Content="自动检测" Margin="0,0,8,0"
+                                Command="{Binding DetectCommand}"/>
+                        <Button Grid.Column="3" Content="打开目录" Command="{Binding OpenDirCommand}"/>
+                    </Grid>
+
+                    <!-- 工具存在性清单 -->
+                    <ItemsControl ItemsSource="{Binding ToolItems}" Margin="20,0,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="4"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ToolStatusItem">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="✓" FontSize="14" Foreground="SeaGreen"
+                                               VerticalAlignment="Center" IsVisible="{Binding Ok}"/>
+                                    <TextBlock Text="✗" FontSize="14" Foreground="OrangeRed"
+                                               VerticalAlignment="Center" IsVisible="{Binding !Ok}"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Content="保存并重连引擎" Classes="accent" Command="{Binding SaveReconnectCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- ========== 外观 ========== -->
+            <Border Classes="card">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="外观" FontWeight="SemiBold" FontSize="16"/>
+                    <StackPanel Orientation="Horizontal" Spacing="32">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="云母背景"/>
+                            <ToggleSwitch OnContent="开" OffContent="关"
+                                          IsChecked="{Binding MicaEnabled, Mode=TwoWay}"/>
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="主题"/>
+                            <ComboBox Width="160"
+                                      ItemsSource="{Binding ThemeOptions}"
+                                      SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ========== 关于 ========== -->
+            <Border Classes="card">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="关于" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="DTS-HD Master Audio Suite Encoder" FontWeight="SemiBold"/>
+                    <TextBlock Text="版本 1.0.0 · Avalonia · 驱动 DtsJobQueue 引擎" Opacity="0.8"/>
+                    <TextBlock Text="基于原版 MAS-SAS 2.60.22 逆向重写界面" Opacity="0.8"/>
+                    <TextBlock Text="作者：LINMENG" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

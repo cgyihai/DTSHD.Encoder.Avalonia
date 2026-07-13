@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 深色主题应用级画笔（扩展 FluentAvalonia 自带画笔，键名与 WinUI3 主题资源一致以便复用） -->
+    <SolidColorBrush x:Key="SystemBrush" Color="#202020"/>
+    <SolidColorBrush x:Key="CardBrush" Color="{StaticResource CardBackgroundFillColorDefault}"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#393939"/>
+    <SolidColorBrush x:Key="LayerFillBrush" Color="{StaticResource LayerFillColorDefault}"/>
+</ResourceDictionary>

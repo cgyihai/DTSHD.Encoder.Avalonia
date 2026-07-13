@@ -1,0 +1,13 @@
+<UserControl
+    x:Class="DTSHD.Encoder.Avalonia.Controls.DbFader"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Spacing="4" HorizontalAlignment="Center" Width="62">
+        <TextBlock x:Name="CaptionText" HorizontalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+        <Slider x:Name="Sld" Orientation="Vertical" Height="150" Minimum="-60" Maximum="12"
+                SmallChange="0.5" LargeChange="3"
+                TickPlacement="Outside" TickFrequency="12"
+                HorizontalAlignment="Center" ValueChanged="OnSliderChanged"/>
+        <TextBox x:Name="ValBox" FontSize="12" TextAlignment="Center" Width="60" MinWidth="60"/>
+    </StackPanel>
+</UserControl>

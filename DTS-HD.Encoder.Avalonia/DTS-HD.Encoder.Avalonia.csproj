@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>DTSHD.Encoder.Avalonia</RootNamespace>
+    <AssemblyName>DTS-HD.Encoder.Avalonia</AssemblyName>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- 启用编译时绑定（性能 + 静态类型检查），与 Avalonia-Fluent-UI Gallery 一致 -->
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>AnyCPU;x64</Platforms>
+    <!-- 单文件发布配置 -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <!-- 包版本与 Avalonia-Fluent-UI-2.0.0 的 Directory.Packages.props 一致 -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="12.0.3" />
+    <!-- DataGrid 版本：lib 用 12.0.0（DataGrid 包没有 12.0.3 发布） -->
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <!-- 仅 Debug 配置启用 Avalonia 开发者工具（F12 检查器），与 Gallery 一致 -->
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- 引用本地 Avalonia-Fluent-UI 源码（与 Gallery 一样的 ProjectReference，便于调试与一致性） -->
+  <ItemGroup>
+    <ProjectReference Include="..\Avalonia-Fluent-UI-2.0.0\src\AvaloniaFluentUI\AvaloniaFluentUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\app.ico" />
+    <AvaloniaResource Include="Assets\dts_file_logo.png" />
+    <AvaloniaResource Include="Themes\Dark.axaml" />
+    <AvaloniaResource Include="Themes\Light.axaml" />
+    <AvaloniaResource Include="Controls\CardStyle.axaml" />
+  </ItemGroup>
+
+  <!-- 生成后在程序输出目录创建 EncoderProfiles 文件夹，用于存放编码页面的设置档 -->
+  <Target Name="CreateEncoderProfilesDir" AfterTargets="Build">
+    <MakeDir Directories="$(OutDir)EncoderProfiles" />
+  </Target>
+
+  <!-- 构建后自动拷贝 DTS-HD_Tool 到输出目录（开箱即用）。
+       源目录：DTS-HD_Tool 文件夹位于项目根目录的上级 D:\APP\DTS-HD_Master_Audio_New\DTS-HD_Tool。
+       目标目录：$(OutDir)DTS-HD_Tool（与主程序 exe 同级）。
+       使用硬链接（HardLink）拷贝以节省磁盘空间，失败则回退到普通拷贝。
+       SkipUnchangedFiles=true 避免每次构建都重复拷贝（仅当源文件变化时才拷）。 -->
+  <PropertyGroup>
+    <DtsHdToolSource>$(MSBuildThisFileDirectory)..\..\DTS-HD_Tool</DtsHdToolSource>
+  </PropertyGroup>
+  <Target Name="CopyDtsHdTool" AfterTargets="Build" Condition="Exists('$(DtsHdToolSource)')">
+    <ItemGroup>
+      <DtsHdToolFiles Include="$(DtsHdToolSource)\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DtsHdToolFiles)" DestinationFolder="$(OutDir)DTS-HD_Tool\%(RecursiveDir)" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+  </Target>
+
+</Project>

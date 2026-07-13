@@ -1,0 +1,9 @@
+<Style xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Selector="Border.card">
+    <!-- 卡片样式：复刻 WinUI3 EncodePage.xaml 里的 Card Border 样式 -->
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+    <Setter Property="Padding" Value="20"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+</Style>

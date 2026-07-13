@@ -1,0 +1,160 @@
+<local:AppWindow
+    x:Class="DTSHD.Encoder.Avalonia.Views.EncodeQueueWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:fui="using:AvaloniaFluentUI.Controls"
+    xmlns:local="using:AvaloniaFluentUI.Windowing"
+    xmlns:srv="using:DTSHD.Encoder.Avalonia.Services"
+    xmlns:vm="using:DTSHD.Encoder.Avalonia.ViewModels"
+    mc:Ignorable="d"
+    Title="编码队列"
+    Width="760" Height="500"
+    MinWidth="560" MinHeight="360"
+    WindowStartupLocation="CenterOwner"
+    CanResize="True"
+    ShowInTaskbar="False"
+    x:DataType="vm:EncodePageViewModel">
+
+    <!-- 队列弹窗（WinUI3 风格列表）：
+         - 关闭本窗口不影响编码（编码由 AppServices.Queue 后台驱动）
+         - DataContext 由 Show(owner, vm) 设置为 EncodePageViewModel，复用 Jobs/SelectedJob/命令
+         - 继承 AppWindow 支持 Mica 背景；Margin=12,40,12,12 避开 40px DefaultTitleBar
+
+         列布局（5 列，进度条与状态文字分列，避免重叠）：
+         Col0=24 (✓ 完成图标)   Col1=220 (文件名固定+省略号)   Col2=* (进度条弹性)
+         Col3=84 (状态文字)     Col4=32 (ℹ 操作按钮) -->
+    <Grid Margin="12,40,12,12">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="8">
+
+            <!-- ===== 标题栏 ===== -->
+            <StackPanel Grid.Row="0" Spacing="2" Margin="4,0,0,4">
+                <TextBlock Text="编码队列" FontSize="18" FontWeight="SemiBold"/>
+                <TextBlock Text="关闭本窗口不会终止编码。编码由后台引擎驱动，可随时打开查看进度。"
+                           Opacity="0.6" FontSize="12"/>
+            </StackPanel>
+
+            <!-- ===== 队列列表（WinUI3 风格 Card + ListView）===== -->
+            <Border Grid.Row="1" Classes="card" Padding="0" CornerRadius="6">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <!-- 表头：5 列与列表项对齐 -->
+                    <Border Grid.Row="0" Background="{DynamicResource LayerFillBrush}"
+                            Padding="10,6" CornerRadius="6,6,0,0">
+                        <Grid ColumnSpacing="8" ColumnDefinitions="24,220,*,84,32">
+                            <TextBlock Grid.Column="0" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="文件" Opacity="0.7" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="进度" Opacity="0.7" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="状态" Opacity="0.7" FontSize="12" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold"/>
+                        </Grid>
+                    </Border>
+                    <!-- 列表 -->
+                    <ListBox Grid.Row="1" x:Name="JobList" SelectionMode="Single" BorderThickness="0"
+                             Background="Transparent"
+                             ItemsSource="{Binding Jobs}"
+                             SelectedItem="{Binding SelectedJob, Mode=TwoWay}">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="10,4"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="srv:EncodeJob">
+                                <Grid ColumnSpacing="8" ColumnDefinitions="24,220,*,84,32">
+                                    <!-- Col0: 完成图标 ✓（绿色） -->
+                                    <TextBlock Grid.Column="0" Text="✓" FontSize="14" FontWeight="Bold"
+                                               Foreground="SeaGreen"
+                                               VerticalAlignment="Center"
+                                               IsVisible="{Binding CheckVisibility}"/>
+                                    <!-- Col1: 文件名（固定宽 + 省略号，避免过宽） -->
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}"
+                                               VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <!-- Col2: 进度条（独立列，不与文字叠加，避免重叠） -->
+                                    <ProgressBar Grid.Column="2"
+                                                 Value="{Binding Percent}" Maximum="100"
+                                                 IsVisible="{Binding ProgressVisibility}"
+                                                 VerticalAlignment="Center"/>
+                                    <!-- Col3: 状态文字（独立列） -->
+                                    <TextBlock Grid.Column="3" Text="{Binding Status}"
+                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                               FontSize="12"/>
+                                    <!-- Col4: 操作按钮 ℹ -->
+                                    <Button Grid.Column="4" Width="24" Height="24" Padding="0"
+                                            Click="OnJobInfoClick"
+                                            Background="Transparent" BorderThickness="0"
+                                            ToolTip.Tip="查看日志/信息"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="ℹ" FontSize="14"/>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <!-- 底部按钮栏 -->
+                    <Border Grid.Row="2" Background="{DynamicResource LayerFillBrush}"
+                            Padding="10,6" CornerRadius="0,0,6,6">
+                        <Grid ColumnSpacing="8">
+                            <WrapPanel Grid.Column="0" Orientation="Horizontal" ItemSpacing="6" LineSpacing="6"
+                                       HorizontalAlignment="Left">
+                                <Button Command="{Binding JobMoveUpCommand}" Width="36" Height="28" Padding="0"
+                                        ToolTip.Tip="上移">
+                                    <TextBlock Text="↑" FontSize="14"/>
+                                </Button>
+                                <Button Command="{Binding JobMoveDownCommand}" Width="36" Height="28" Padding="0"
+                                        ToolTip.Tip="下移">
+                                    <TextBlock Text="↓" FontSize="14"/>
+                                </Button>
+                            </WrapPanel>
+                            <WrapPanel Grid.Column="1" Orientation="Horizontal" ItemSpacing="6" LineSpacing="6"
+                                       HorizontalAlignment="Right">
+                                <Button Content="清除已完成" Command="{Binding ClearCompleteCommand}"/>
+                                <Button Content="清除" Command="{Binding ClearJobCommand}"/>
+                                <!-- 终止编码：红色固定，hover/pressed 不丢失背景色（共享 encode-stop 样式） -->
+                                <Button Content="终止编码" Classes="encode-stop" Command="{Binding AbortCommand}"/>
+                            </WrapPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ===== 状态栏 ===== -->
+            <TextBlock Grid.Row="2" Opacity="0.7" FontSize="12" Margin="4,0,0,0"
+                       Text="{Binding Jobs.Count, StringFormat='共 {0} 项任务'}"/>
+        </Grid>
+    </Grid>
+
+    <!-- 终止编码按钮样式：与 EncodeView 一致，覆盖 FluentButton 模板内 ContentPresenter 背景 -->
+    <Window.Styles>
+        <Style Selector="Button.encode-stop">
+            <Setter Property="Background" Value="#E53935"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E53935"/>
+            <Setter Property="BackgroundSizing" Value="OuterBorderEdge"/>
+            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="#E53935"/>
+                <Setter Property="BorderBrush" Value="#E53935"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Transitions">
+                    <Transitions>
+                        <BrushTransition Property="Background" Duration="00:00:00.083"/>
+                    </Transitions>
+                </Setter>
+            </Style>
+        </Style>
+        <Style Selector="Button.encode-stop:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#EF4A46"/>
+            <Setter Property="BorderBrush" Value="#EF4A46"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.encode-stop:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#C02E2A"/>
+            <Setter Property="BorderBrush" Value="#C02E2A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+</local:AppWindow>

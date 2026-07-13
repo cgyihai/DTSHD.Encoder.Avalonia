@@ -1,0 +1,59 @@
+<local:AppWindow
+    x:Class="DTSHD.Encoder.Avalonia.Views.TextPreviewWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:AvaloniaFluentUI.Windowing"
+    mc:Ignorable="d"
+    Title="预览"
+    Width="720" Height="480"
+    MinWidth="480" MinHeight="320"
+    WindowStartupLocation="CenterOwner"
+    CanResize="True"
+    ShowInTaskbar="False">
+
+    <!-- 文本预览弹窗（用于 .cfg 预览 / 命令预览 / 日志查看）
+         - 继承 AppWindow 支持 Mica 背景
+         - Margin=12,40,12,12 避开 40px DefaultTitleBar
+         - 单 TextBox（ContentBox）：
+           · .cfg / 日志：IsReadOnly=True + 滚动条 Auto（长文本）
+           · 命令预览：IsReadOnly=False（可编辑），命令通常较短，Auto 模式下不显示滑块
+         - 背景跟随主题（不使用固定黑色），与主界面保持一致 -->
+    <Grid Margin="12,40,12,12">
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="8">
+
+            <!-- ===== 标题栏 ===== -->
+            <StackPanel Grid.Row="0" Spacing="2" Margin="4,0,0,4">
+                <TextBlock x:Name="TitleText" Text="预览" FontSize="16" FontWeight="SemiBold"/>
+                <TextBlock x:Name="SubtitleText" Text="" Opacity="0.6" FontSize="12"/>
+            </StackPanel>
+
+            <!-- ===== 文本内容（卡片容器 + 等宽字体 TextBox）=====
+                 背景使用主题资源，跟随浅色/深色主题切换。
+                 水平滚动条 Disabled：TextWrapping=Wrap 已自动换行，无需横向滑块，
+                 避免滑块占用空间导致编辑区高度变小。
+                 TextBox 拉伸填满卡片，缩放窗口时命令自动按宽度换行。 -->
+            <Border Grid.Row="1" Classes="card" Padding="0" CornerRadius="6">
+                <TextBox x:Name="ContentBox" AcceptsReturn="True" TextWrapping="Wrap"
+                         FontFamily="Cascadia Mono, Consolas, Menlo, monospace"
+                         FontSize="13"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         Padding="14,10"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+            </Border>
+
+            <!-- ===== 底部按钮栏：状态文字 + 复制全部 + 关闭 ===== -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                <TextBlock x:Name="StatusText" Grid.Column="0" Opacity="0.7" FontSize="12"
+                           VerticalAlignment="Center" Text=""/>
+                <Button Grid.Column="1" Content="复制全部" Click="OnCopyAllClick" HorizontalAlignment="Right"/>
+                <Button Grid.Column="2" Content="关闭" Click="OnCloseClick" HorizontalAlignment="Right"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</local:AppWindow>

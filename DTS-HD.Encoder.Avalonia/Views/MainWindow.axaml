@@ -1,0 +1,66 @@
+<view:AppWindow
+    x:Class="DTSHD.Encoder.Avalonia.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:fui="clr-namespace:AvaloniaFluentUI.Controls;assembly=AvaloniaFluentUI"
+    xmlns:view="clr-namespace:AvaloniaFluentUI.Windowing;assembly=AvaloniaFluentUI"
+    xmlns:ani="clr-namespace:AvaloniaFluentUI.Media.Animation;assembly=AvaloniaFluentUI"
+    xmlns:vm="using:DTSHD.Encoder.Avalonia.ViewModels"
+    Title="DTS-HD Master Audio Suite"
+    Width="1500" Height="1100" MinWidth="1280" MinHeight="900"
+    WindowStartupLocation="CenterScreen"
+    Background="{DynamicResource SystemBrush}"
+    Icon="/Assets/app.ico"
+    IconSize="18"
+    TitleBarMargin="0,0,0,0"
+    mc:Ignorable="d"
+    x:DataType="vm:MainWindowViewModel">
+
+    <!-- AppWindow 模板：RootBorder(Padding) → Panel → [DefaultTitleBar(Top, ZIndex=99), ContentPresenter(Stretch)]。
+         DefaultTitleBar 渲染 Icon+Title+CaptionButtons（最小化/最大化/关闭），默认高度 40px（AppWindowTitleBar._height=40）。
+         ContentPresenter 是 Stretch，会从窗口顶部开始绘制 → 与 DefaultTitleBar 重叠。
+         修复：用 NavigationView.Margin 把内容下移 40px（= DefaultTitleBar 实际高度）。
+         注意：之前设 TitleBarHeight=32 + Margin=32 是错的——TitleBarHeight 只压扁标题栏内容，
+         但 CaptionButtons 仍在 0-40px 区域，导致 32-40px 之间内容与按钮重叠。
+         正确做法：保留默认 TitleBarHeight=40，NavigationView.Margin=40 精确对齐。 -->
+    <fui:NavigationView
+        x:Name="Nav"
+        Margin="0,40,0,0"
+        PaneDisplayMode="Left"
+        IsPaneOpen="False"
+        CompactPaneLength="48"
+        OpenPaneLength="240"
+        IsBackButtonVisible="False"
+        IsSettingsVisible="True"
+        SelectedItem="{Binding NavigationViewSelectedItem, Mode=TwoWay}"
+        Loaded="OnNavLoaded">
+        <fui:NavigationView.MenuItems>
+            <!-- 导航图标：显式 FontIconSource + Segoe Fluent Icons 系统字体 + WinUI3 原始 glyph。
+                  完全复刻 WinUI3 NavigationViewItem.Icon FontIcon Glyph 的视觉效果。
+                  之前用 IconSource="Audio" 字符串方式，IconSourceConverter 解析为 SymbolIconSource，
+                  但 SymbolIcon 用 AvaloniaFluentUI 内置 Symbols.ttf 字体，glyph 编码与 WinUI3 的
+                  Segoe Fluent Icons 不同，导致图标不显示或错误。改用 FontIconSource 直接指定
+                  系统字体 + glyph，确保渲染正确。
+                  音频编码 glyph=0xED1F；StreamTools glyph=0xF035（与 WinUI3 MainWindow.xaml 一致）。 -->
+            <fui:NavigationViewItem Content="音频编码" IsSelected="True" Tag="Encode">
+                <fui:NavigationViewItem.IconSource>
+                    <fui:FontIconSource Glyph="&#xED1F;" FontFamily="Segoe Fluent Icons"/>
+                </fui:NavigationViewItem.IconSource>
+            </fui:NavigationViewItem>
+            <fui:NavigationViewItem Content="DTS-HD StreamTools" Tag="Stream">
+                <fui:NavigationViewItem.IconSource>
+                    <fui:FontIconSource Glyph="&#xF035;" FontFamily="Segoe Fluent Icons"/>
+                </fui:NavigationViewItem.IconSource>
+            </fui:NavigationViewItem>
+        </fui:NavigationView.MenuItems>
+        <fui:NavigationView.Content>
+            <!-- 页面切换动画：SlideUp + FadeIn（FromVerticalOffset=28, Duration=0.8s）。
+                 位移幅度从 100 调小到 28，减少每帧重绘区域，避免大子树动画掉帧。
+                 性能优化在 StackContent.AnimateContent() 中：动画期间给 ContentPresenter 加
+                 RenderTransform + IsHitTestVisible=false，让位移走 GPU 合成层而非每帧触发布局 pass。 -->
+            <fui:StackContent Content="{Binding CurrentViewModel}"/>
+        </fui:NavigationView.Content>
+    </fui:NavigationView>
+</view:AppWindow>
