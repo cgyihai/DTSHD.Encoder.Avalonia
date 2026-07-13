@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # DTS-HD.Encoder.Avalonia
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -10,7 +9,7 @@ A modern GUI encoder front-end for **DTS-HD Master Audio Suite**, built on Avalo
 
 > 🌐 [中文说明](#中文说明) · 🌍 [English](#english)
 
----
+
 
 ## 中文说明
 
