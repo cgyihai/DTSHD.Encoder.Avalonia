@@ -8,6 +8,34 @@
     mc:Ignorable="d"
     x:DataType="vm:SettingsPageViewModel">
 
+    <UserControl.Styles>
+        <!-- 超链接样式按钮：透明背景 + 强调色文字 + hover 下划线 + 手型光标。
+             FluentButton 模板在 :pointerover/:pressed 会用 /template/ ContentPresenter
+             覆盖背景，故需用相同选择器把背景压回 Transparent（参考 EncodeView 按钮样式做法）。 -->
+        <Style Selector="Button.link">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+        </Style>
+        <Style Selector="Button.link /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+        </Style>
+        <Style Selector="Button.link:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}"/>
+            <Setter Property="TextBlock.TextDecorations" Value="Underline"/>
+        </Style>
+        <Style Selector="Button.link:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorTertiaryBrush}"/>
+        </Style>
+    </UserControl.Styles>
+
     <ScrollViewer Padding="32,8,32,24">
         <StackPanel Spacing="16" HorizontalAlignment="Stretch">
 
@@ -92,9 +120,26 @@
                 <StackPanel Spacing="4">
                     <TextBlock Text="关于" FontWeight="SemiBold" FontSize="16"/>
                     <TextBlock Text="DTS-HD Master Audio Suite Encoder" FontWeight="SemiBold"/>
-                    <TextBlock Text="版本 1.0.0 · Avalonia · 驱动 DtsJobQueue 引擎" Opacity="0.8"/>
+                    <!-- 版本号绑定 AppVersion（与 csproj Version 一致），改版本只需改一处 -->
+                    <TextBlock Text="{Binding AppVersion, StringFormat='版本 {0} · Avalonia · 驱动 DtsJobQueue 引擎'}" Opacity="0.8"/>
                     <TextBlock Text="基于原版 MAS-SAS 2.60.22 逆向重写界面" Opacity="0.8"/>
-                    <TextBlock Text="作者：LINMENG" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                    <TextBlock Text="作者：cgyihai / linmeng" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                    <!-- 项目主页链接：点击用系统默认浏览器打开 GitHub（查看更新与新构建版本） -->
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="项目主页:" Opacity="0.8" VerticalAlignment="Center"/>
+                        <Button Classes="link" Command="{Binding OpenGitHubCommand}"
+                                Content="{Binding GitHubUrl}"
+                                ToolTip.Tip="在浏览器中打开 GitHub 项目主页"/>
+                    </StackPanel>
+
+                    <!-- 在线更新：点击"检查更新"查询 GitHub 最新 Release；发现新版时出现"前往下载"。 -->
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0" VerticalAlignment="Center">
+                        <Button Content="检查更新" Command="{Binding CheckUpdateCommand}"/>
+                        <Button Classes="link" Content="前往下载" Command="{Binding OpenDownloadCommand}"
+                                IsVisible="{Binding UpdateAvailable}"
+                                ToolTip.Tip="在浏览器中打开新版本发布页"/>
+                        <TextBlock Text="{Binding UpdateStatus}" Opacity="0.8" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

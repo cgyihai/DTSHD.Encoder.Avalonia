@@ -18,6 +18,21 @@ internal sealed class Program
     public static void Main(string[] args) => BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
 
+    /// <summary>
+    /// 判断当前系统是否为 Windows 11（Build ≥ 22000）。
+    /// Win11 支持 Segoe Fluent Icons 字体 + Mica 背景；
+    /// Win10 回退到 Segoe MDL2 Assets 字体 + 普通背景。
+    /// </summary>
+    public static bool IsWindows11 { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT
+        && Environment.OSVersion.Version >= new Version(10, 0, 22000, 0);
+
+    /// <summary>
+    /// 判断当前系统是否为 Windows 10（Build ≥ 10240）。
+    /// 用于决定是否启用 DirectComposition（Win10 1809+ 全面支持）。
+    /// </summary>
+    public static bool IsWindows10OrLater { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT
+        && Environment.OSVersion.Version >= new Version(10, 0);
+
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
@@ -29,15 +44,20 @@ internal sealed class Program
                 RenderingMode = [Win32RenderingMode.AngleEgl,
                                  Win32RenderingMode.Software],
 
-                // —— GPU 硬件合成 + Mica 模糊背景 ——
-                // WinUIComposition = 把 Avalonia 渲染到 Windows.UI.Composition 树（GPU 合成 + 支持云母）；
-                //   - 默认跟随显示器 vsync（144Hz 显示器即 144fps，不锁 60fps）
-                //   - 是 EnabledMica(true) 生效的前提
-                // DirectComposition = GPU 合成无 Mica（WinUIComposition 不可用时回退）；
-                // RedirectionSurface = 软件兜底（前两者都不可用时保证窗口仍能显示）。
-                CompositionMode = [Win32CompositionMode.WinUIComposition,
-                                  Win32CompositionMode.DirectComposition,
-                                  Win32CompositionMode.RedirectionSurface],
+                // —— GPU 合成层 + Mica 模糊背景 ——
+                // Win11（Build≥22000）：启用 WinUIComposition 获得 Mica 模糊背景 + 高帧率 vsync 跟随。
+                // Win10（Build≥10240）：WinUIComposition 在部分版本缺少 comsvc.dll，直接用 DirectComposition 更稳定；
+                //   Mica 不可用，EnabledMica 调用会被 AppWindow 内部静默忽略。
+                //   DirectComposition 仍提供 GPU 合成与 vsync 跟随（144Hz 显示器即 144fps，不锁 60fps）。
+                // 更低版本：回退到 RedirectionSurface（软件合成兜底，保证窗口仍能显示）。
+                CompositionMode = IsWindows11
+                    ? [Win32CompositionMode.WinUIComposition,
+                       Win32CompositionMode.DirectComposition,
+                       Win32CompositionMode.RedirectionSurface]
+                    : IsWindows10OrLater
+                        ? [Win32CompositionMode.DirectComposition,
+                           Win32CompositionMode.RedirectionSurface]
+                        : [Win32CompositionMode.RedirectionSurface],
 
                 // 弹出层（Flyout/ContextMenu）使用原生 Overlay，避免冗余合成
                 OverlayPopups = false,

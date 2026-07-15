@@ -9,7 +9,7 @@ A modern GUI encoder front-end for **DTS-HD Master Audio Suite**, built on Avalo
 
 > 🌐 [中文说明](#中文说明) · 🌍 [English](#english)
 
-
+---
 
 ## 中文说明
 
@@ -150,7 +150,3 @@ This repository **does not contain** and **will not distribute** any proprietary
 ### License
 
 This project is licensed under the [MIT License](LICENSE).
-=======
-# DTSHD.Encoder.Avalonia
-基于 Avalonia UI 开发的 DTS-HD 音视频图形化操作界面，仅提供可视化操作逻辑，不捆绑、不内置任何受版权保护的DTS官方编码二进制程序，纯跨平台桌面GUI工具。
->>>>>>> f69ae47b9130335945b06f393497b178e6dc25a6

@@ -31,13 +31,21 @@ public sealed class AppSettings
         // 文件夹拷贝到主程序 exe 同级目录即可）。
         var baseDir = AppContext.BaseDirectory;
         var primary = Path.Combine(baseDir, "DTS-HD_Tool");
+        // 候选目录（按优先级）：
+        //  1. 主程序 exe 同级 DTS-HD_Tool（正式部署位置，开箱即用）
+        //  2. 源码树相对位置（开发调试时 bin/Debug 上溯到仓库根的上级）
+        //  3. 当前工作目录下 DTS-HD_Tool（便携式启动兜底）
+        // 不再硬编码任何机器专属绝对路径（如 D:\...），保证他机可移植。
         string[] candidates =
         {
             primary,
             Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "..", "DTS-HD_Tool")),
-            @"D:\APP\DTS-HD_Master_Audio_New\DTS-HD_Tool",
+            Path.Combine(Directory.GetCurrentDirectory(), "DTS-HD_Tool"),
         };
-        foreach (var c in candidates) if (Directory.Exists(c)) return c;
+        foreach (var c in candidates)
+        {
+            try { if (Directory.Exists(c)) return c; } catch { /* 无效路径忽略 */ }
+        }
         return primary;
     }
 

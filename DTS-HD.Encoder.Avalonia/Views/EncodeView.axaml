@@ -48,8 +48,9 @@
 
             <!-- ========== 输入 / 输出 + 编码设置 + 时间码设置（左右双栏）==========
                  左栏：输入/输出（含声道行表头、声道行、输出行）
-                 右栏：编码设置（上）+ 时间码设置（下），垂直堆叠 -->
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" HorizontalAlignment="Stretch">
+                 右栏：编码设置（上）+ 时间码设置（下），垂直堆叠
+                 列比例 3:2：输入区固定列多（~420px），需要更多空间 -->
+            <Grid ColumnDefinitions="3*,2*" ColumnSpacing="12" HorizontalAlignment="Stretch" MinWidth="860">
 
                 <!-- ===== 左栏：输入 / 输出 =====
                      声道输入区 MinHeight 绑定到 ViewModel.InputAreaMinHeight，
@@ -85,10 +86,22 @@
                             </StackPanel>
                         </Grid>
 
+                        <!-- 单文件输入表头（与分轨表头样式一致，列宽对齐） -->
+                        <Grid ColumnDefinitions="40,*,48,52,72,100,72" ColumnSpacing="6"
+                              IsVisible="{Binding IsSingleFilePanelVisible}" Margin="0,4,0,4">
+                            <TextBlock Grid.Column="0" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="文件" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="声道" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="位宽" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="采样率" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="时长" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="6" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </Grid>
+
                         <!-- 单文件输入行：信息框（声道/位宽/采样率/时长）放在输入框右侧、浏览按钮左侧。
                              列宽与分轨行一致（40,*,48,52,72,100,72），时长列 100px 与分轨时长框完全对齐。 -->
                         <Grid ColumnDefinitions="40,*,48,52,72,100,72" ColumnSpacing="6" IsVisible="{Binding IsSingleFilePanelVisible}">
-                            <TextBlock Grid.Column="0" Text="文件" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Watermark="多声道 .wav (RIFF WAV, 最高 7.1)" Text="{Binding SingleFilePath, Mode=TwoWay}"/>
                             <Border Grid.Column="2" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
@@ -195,7 +208,7 @@
                     <Border Classes="card">
                         <StackPanel Spacing="12">
                             <TextBlock Text="编码设置" FontWeight="SemiBold" FontSize="16"/>
-                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="12">
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                                     <TextBlock Text="目标格式" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding DestFormats}"
@@ -233,13 +246,13 @@
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                             </Grid>
-                            <StackPanel Orientation="Horizontal" Spacing="16">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="对白归一化:" VerticalAlignment="Center"/>
-                                <ComboBox MinWidth="220"
+                                <ComboBox MinWidth="170"
                                           ItemsSource="{Binding DialogNormOptions}"
                                           SelectedIndex="{Binding SelectedDialogNormIndex, Mode=TwoWay}"/>
                             </StackPanel>
-                            <WrapPanel Orientation="Horizontal" ItemSpacing="12" LineSpacing="8">
+                            <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="6">
                                 <ToggleButton Content="96/24 Core" IsChecked="{Binding Use9624, Mode=TwoWay}"/>
                                 <ToggleButton Content="Rear Ch. -3dB" IsChecked="{Binding AttenuateRearCh, Mode=TwoWay}"/>
                                 <ToggleButton Content="ES Phase Shift" IsChecked="{Binding EsPhaseShift, Mode=TwoWay}"/>
@@ -250,9 +263,9 @@
 
                     <!-- 右栏下：时间码设置 -->
                     <Border Classes="card">
-                        <StackPanel Spacing="12">
+                        <StackPanel Spacing="10">
                             <TextBlock Text="时间码设置 (Timecode)" FontWeight="SemiBold" FontSize="16"/>
-                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="10">
+                            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                                     <TextBlock Text="TC 帧率" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding FrameRateOptions}"
@@ -298,98 +311,100 @@
                     <TextBlock Text="比特流 (Bitstream / 元数据)" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
                 </Expander.Header>
                 <StackPanel Spacing="12" Margin="0,8,0,0">
-                    <!-- 横向滚动兜底：比特流分区主块（主音频衰减 + 单声道映射）合计 672 px，
-                         窄窗口或面板展开时会溢出。仿下混分区做法包 ScrollViewer。 -->
+                    <!-- 主音频衰减 + 单声道映射：横向滚动兜底（窄窗口溢出时用） -->
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                        <StackPanel Orientation="Horizontal" Spacing="40">
+                        <StackPanel Orientation="Horizontal" Spacing="24">
                             <!-- 主音频衰减 -->
-                            <StackPanel Spacing="8">
+                            <StackPanel Spacing="6">
                                 <TextBlock Text="主音频衰减 (Static)" FontWeight="SemiBold"/>
                                 <CheckBox Content="启用主音频衰减" IsChecked="{Binding UsePrimaryAudioAttenuation, Mode=TwoWay}"/>
-                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
                                     <ctl:DbFader Caption="Primary" Minimum="-60" Maximum="40" DbValue="{Binding PrimaryDb, Mode=TwoWay}"/>
-                                    <StackPanel Spacing="8" VerticalAlignment="Center">
+                                    <StackPanel Spacing="6" VerticalAlignment="Center">
                                         <StackPanel Spacing="2">
-                                        <TextBlock Text="Fade Down" FontSize="12"/>
-                                        <ComboBox Width="100"
-                                                  ItemsSource="{Binding PaFadeOptions}"
-                                                  SelectedItem="{Binding SelectedPaFadeDown, Mode=TwoWay}"/>
-                                    </StackPanel>
-                                    <StackPanel Spacing="2">
-                                        <TextBlock Text="Fade Up" FontSize="12"/>
-                                        <ComboBox Width="100"
-                                                  ItemsSource="{Binding PaFadeOptions}"
-                                                  SelectedItem="{Binding SelectedPaFadeUp, Mode=TwoWay}"/>
+                                            <TextBlock Text="Fade Down" FontSize="12"/>
+                                            <ComboBox Width="96"
+                                                      ItemsSource="{Binding PaFadeOptions}"
+                                                      SelectedItem="{Binding SelectedPaFadeDown, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="Fade Up" FontSize="12"/>
+                                            <ComboBox Width="96"
+                                                      ItemsSource="{Binding PaFadeOptions}"
+                                                      SelectedItem="{Binding SelectedPaFadeUp, Mode=TwoWay}"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                        <!-- 单声道次音频声道映射 -->
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="单声道次音频 - 声道输出映射" FontWeight="SemiBold"/>
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <ctl:DbFader Caption="L" DbValue="{Binding MonoLDb, Mode=TwoWay}"/>
-                                <ctl:DbFader Caption="R" DbValue="{Binding MonoRDb, Mode=TwoWay}"/>
-                                <ctl:DbFader Caption="C" DbValue="{Binding MonoCDb, Mode=TwoWay}"/>
-                                <ctl:DbFader Caption="Ls" DbValue="{Binding MonoLsDb, Mode=TwoWay}"/>
-                                <ctl:DbFader Caption="Rs" DbValue="{Binding MonoRsDb, Mode=TwoWay}"/>
+                            <!-- 单声道次音频声道映射 -->
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="单声道次音频 - 声道输出映射" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <ctl:DbFader Caption="L" DbValue="{Binding MonoLDb, Mode=TwoWay}"/>
+                                    <ctl:DbFader Caption="R" DbValue="{Binding MonoRDb, Mode=TwoWay}"/>
+                                    <ctl:DbFader Caption="C" DbValue="{Binding MonoCDb, Mode=TwoWay}"/>
+                                    <ctl:DbFader Caption="Ls" DbValue="{Binding MonoLsDb, Mode=TwoWay}"/>
+                                    <ctl:DbFader Caption="Rs" DbValue="{Binding MonoRsDb, Mode=TwoWay}"/>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
-                    </StackPanel>
                     </ScrollViewer>
 
-                    <!-- AAF 元数据 -->
+                    <!-- AAF 元数据：所有项横排铺满，避免右侧空白 -->
                     <StackPanel Spacing="8">
-                        <CheckBox Content="嵌入 AAF 元数据" IsChecked="{Binding EmbedAaf, Mode=TwoWay}"/>
-                        <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
+                        <!-- 第 1 行：启用 AAF + 衰减方式单选（横排） -->
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <CheckBox Content="嵌入 AAF 元数据" IsChecked="{Binding EmbedAaf, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <TextBlock Text="衰减方式:" VerticalAlignment="Center" Opacity="0.7"/>
+                            <RadioButton Content="Unison" GroupName="aafatt" IsChecked="{Binding !IsAafIndependent}" VerticalAlignment="Center"/>
+                            <RadioButton Content="Independent" GroupName="aafatt" IsChecked="{Binding IsAafIndependent, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <!-- 第 2 行：AAF 文件路径 + 浏览（限制 TextBox MaxWidth 避免过宽） -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                             <TextBlock Grid.Column="0" Text="AAF 文件:" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding AafFilePath, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding AafFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
                             <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseAafCommand}"/>
                         </Grid>
-                        <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
-                            <TextBlock Text="衰减方式:" VerticalAlignment="Center"/>
-                            <RadioButton Content="Unison" GroupName="aafatt" IsChecked="{Binding !IsAafIndependent}"/>
-                            <RadioButton Content="Independent" GroupName="aafatt" IsChecked="{Binding IsAafIndependent, Mode=TwoWay}"/>
-                        </WrapPanel>
-                        <Grid ColumnDefinitions="Auto,70,Auto,70,Auto,70,Auto,70" ColumnSpacing="8" RowSpacing="6" RowDefinitions="Auto,Auto">
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Unison" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding AafUnisonValue, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="LF" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AafLF, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="RF" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AafRF, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="4" Text="C" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding AafC, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="1" Grid.Column="6" Text="LFE" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding AafLFE, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="LS" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding AafLS, Mode=TwoWay}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="4" Text="RS" VerticalAlignment="Center"/>
-                            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding AafRS, Mode=TwoWay}"/>
-                        </Grid>
-                        <WrapPanel Orientation="Horizontal" ItemSpacing="8" LineSpacing="6">
+                        <!-- 第 3 行：7 个衰减值横排一行（Unison + 6 声道），不再竖排
+                             每项 = 标签(40px) + 输入框(56px) + Spacing(10) ≈ 106px × 7 = ~740px -->
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="Unison" VerticalAlignment="Center" Width="48"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafUnisonValue, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafLF, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafRF, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="C" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafC, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LFE" VerticalAlignment="Center" Width="28"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafLFE, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LS" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafLS, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RS" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding AafRS, Mode=TwoWay}"/></StackPanel>
+                        </StackPanel>
+                        <!-- 第 4 行：声像开关 + 5 个声像值横排一行 -->
+                        <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="6">
                             <CheckBox Content="声像 (Panning)" IsChecked="{Binding AafPanningEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LF" VerticalAlignment="Center"/><TextBox Classes="Narrow" Width="60" Text="{Binding PanLF, Mode=TwoWay}"/></StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RF" VerticalAlignment="Center"/><TextBox Classes="Narrow" Width="60" Text="{Binding PanRF, Mode=TwoWay}"/></StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="C" VerticalAlignment="Center"/><TextBox Classes="Narrow" Width="60" Text="{Binding PanC, Mode=TwoWay}"/></StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LS" VerticalAlignment="Center"/><TextBox Classes="Narrow" Width="60" Text="{Binding PanLS, Mode=TwoWay}"/></StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RS" VerticalAlignment="Center"/><TextBox Classes="Narrow" Width="60" Text="{Binding PanRS, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanLF, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanRF, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="C" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanC, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LS" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanLS, Mode=TwoWay}"/></StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RS" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanRS, Mode=TwoWay}"/></StackPanel>
                         </WrapPanel>
                     </StackPanel>
 
-                    <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
-                        <CheckBox Content="单一剪辑 (Single Clip)" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}"/>
-                        <CheckBox Content="使用 CSV 分支点" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}"/>
-                    </WrapPanel>
-                    <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
+                    <!-- 单一剪辑 + CSV 分支点 + CSV 文件路径：全部横排一行 -->
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <CheckBox Content="单一剪辑 (Single Clip)" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="使用 CSV 分支点" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <TextBlock Grid.Column="0" Text="CSV 文件:" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CsvFilePath, Mode=TwoWay}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CsvFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
                         <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCsvCommand}"/>
                     </Grid>
-                    <WrapPanel Orientation="Horizontal" ItemSpacing="20" LineSpacing="8">
-                        <CheckBox Content="Express 对话模式" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}"/>
-                        <CheckBox Content="7.1 Wide 重映射" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}"/>
-                    </WrapPanel>
+
+                    <!-- Express + 7.1 Wide：横排一行 -->
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <CheckBox Content="Express 对话模式" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="7.1 Wide 重映射" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- 程序信息 -->
                     <StackPanel Spacing="4">
                         <TextBlock Text="程序信息 (Program Info)" Opacity="0.7" FontSize="12"/>
                         <TextBox Watermark="可选" AcceptsReturn="True" Height="70" TextWrapping="Wrap"

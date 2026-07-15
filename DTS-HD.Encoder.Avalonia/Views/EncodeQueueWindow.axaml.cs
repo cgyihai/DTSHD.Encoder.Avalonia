@@ -49,13 +49,18 @@ public partial class EncodeQueueWindow : AppWindow
             "Dark" => ThemeVariant.Dark,
             _ => ThemeVariant.Default
         };
+        // 主题切换后重新应用 Mica，使云母背景色跟随主题更新
+        ApplyBackdrop();
     }
 
     private void ApplyBackdrop()
     {
         try
         {
-            EnabledMica(AppServices.Settings.MicaEnabled);
+            // 与 MainWindow 一致：仅 Windows 11+ 才启用 Mica。
+            // Win10 上 MicaEnabled 默认为 true，若不加 IsWindows11 判断会在 Win10 尝试
+            // 应用云母背景（DWM 需要 Win11 22621+），导致背景表现不一致。
+            EnabledMica(AppServices.Settings.MicaEnabled && Program.IsWindows11);
         }
         catch
         {

@@ -50,6 +50,20 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     /// <summary>主题选项；下标对应 SelectedThemeIndex：0=跟随系统(Default), 1=浅色(Light), 2=深色(Dark)。</summary>
     public IReadOnlyList<string> ThemeOptions { get; } = new[] { "跟随系统", "浅色", "深色" };
 
+    // ============ 关于 ============
+    /// <summary>应用版本号（取自程序集版本，与 csproj &lt;Version&gt; 一致，单一来源）。</summary>
+    public string AppVersion => UpdateService.CurrentVersion();
+    /// <summary>项目主页（关于页链接指向，用于查看更新与新版本）。</summary>
+    public string GitHubUrl => $"https://github.com/{UpdateService.Owner}/{UpdateService.Repo}";
+
+    // ============ 在线更新（GitHub 公开仓）============
+    /// <summary>更新检查状态文本（空=未检查）。</summary>
+    [ObservableProperty] private string _updateStatus = "";
+    /// <summary>是否检测到新版本；View 据此显示"前往下载"按钮。</summary>
+    [ObservableProperty] private bool _updateAvailable;
+    /// <summary>发现的新版本下载/发布页地址（默认指向 Releases 页）。</summary>
+    private string _downloadUrl = UpdateService.ReleasesPageUrl;
+
     // ============ 可绑定属性 ============
     /// <summary>工具集目录（对应 WinUI3 ToolDirBox.Text）。</summary>
     [ObservableProperty] private string _toolDir = "";
@@ -160,6 +174,53 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     /// <summary>自动检测：依据当前 ToolDir 重新检查工具集存在性（对应 WinUI3 OnDetect）。</summary>
     [RelayCommand]
     private void Detect() => RefreshStatus();
+
+    /// <summary>打开项目主页：用系统默认浏览器跳转 GitHub（查看更新与新版本）。</summary>
+    [RelayCommand]
+    private void OpenGitHub()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(GitHubUrl) { UseShellExecute = true });
+        }
+        catch { /* 无浏览器/被拦截时静默，不影响其它功能 */ }
+    }
+
+    /// <summary>检查更新：查询 GitHub 最新 Release 并与本机版本比较。
+    /// 用 AsyncRelayCommand，检查期间命令自动禁用（防重复点击）。</summary>
+    [RelayCommand]
+    private async Task CheckUpdateAsync()
+    {
+        UpdateAvailable = false;
+        UpdateStatus = "正在检查更新…";
+        var info = await UpdateService.CheckLatestAsync();
+        if (info == null)
+        {
+            UpdateStatus = "检查失败：网络不可用、API 限流或暂无发布版本。";
+            return;
+        }
+        if (info.IsNewer)
+        {
+            _downloadUrl = info.DownloadUrl;
+            UpdateAvailable = true;
+            UpdateStatus = $"发现新版本 {info.LatestVersion}（当前 {info.CurrentVersion}）。";
+        }
+        else
+        {
+            UpdateStatus = $"已是最新版本（{info.CurrentVersion}）。";
+        }
+    }
+
+    /// <summary>前往下载：用系统默认浏览器打开新版本的 Release 页面。</summary>
+    [RelayCommand]
+    private void OpenDownload()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(_downloadUrl) { UseShellExecute = true });
+        }
+        catch { /* 静默 */ }
+    }
 
     /// <summary>打开目录：用资源管理器打开当前 ToolDir（若存在）（对应 WinUI3 OnOpenDir）。</summary>
     [RelayCommand]

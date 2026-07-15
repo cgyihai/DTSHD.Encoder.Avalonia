@@ -100,11 +100,15 @@ public partial class TextPreviewWindow : AppWindow
             "Dark" => ThemeVariant.Dark,
             _ => ThemeVariant.Default
         };
+        // 主题切换后重新应用 Mica，使云母背景色跟随主题更新
+        ApplyBackdrop();
     }
 
     private void ApplyBackdrop()
     {
-        try { EnabledMica(AppServices.Settings.MicaEnabled); }
+        // 与 MainWindow 一致：仅 Windows 11+ 才启用 Mica（Win10 上 MicaEnabled 默认 true，
+        // 不加 IsWindows11 判断会在 Win10 尝试云母背景，表现不一致）。
+        try { EnabledMica(AppServices.Settings.MicaEnabled && Program.IsWindows11); }
         catch { /* 非 Windows 11 回退 */ }
     }
 }

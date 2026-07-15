@@ -364,9 +364,19 @@ public static class WavChannelRemapper
             while (remaining > 0)
             {
                 int toRead = (int)Math.Min(readBuf.Length, remaining);
-                int read = src.Read(readBuf, 0, toRead);
+                // 填满缓冲区到整帧边界：FileStream.Read 允许返回少于请求的字节，
+                // 若不循环填满，最后剩下的“半帧”字节会被丢弃且流位置已推进 →
+                // 后续所有帧声道整体错位、输出损坏。这里循环读满 toRead（整帧数），
+                // 只有真正 EOF（文件被截断）才提前退出。
+                int read = 0;
+                while (read < toRead)
+                {
+                    int n = src.Read(readBuf, read, toRead - read);
+                    if (n == 0) break;   // EOF：文件被截断，处理已读到的整帧后结束
+                    read += n;
+                }
                 if (read == 0) break;
-                // 处理非整帧数据（最后一个不完整帧）
+                // 处理非整帧数据（仅在被截断的文件末尾可能出现，丢弃不完整帧）
                 int framesRead = read / blockAlign;
                 int actualRead = framesRead * blockAlign;
 
