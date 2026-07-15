@@ -23,7 +23,7 @@
 
 `DTS-HD.Encoder.Avalonia` 把命令行的 **DTS-HD Master Audio Suite** 编码引擎（`DtsJobQueue` / `DTSToolFramewrk`）封装成一个现代化、跨系统自适应的图形界面。它逆向复刻了官方 Java GUI（MAS-SAS 2.60.22）的完整编码逻辑，用 **Avalonia 12 + WinUIComposition GPU 合成管线** 重写界面，让「拖入音频 → 设参数 → 出 `.dtshd`」一步到位，同时保留官方 `.cfg` 的逐行一致性。
 
-> 面向蓝光原盘制作、DTS-HD MA / DTS:X 音轨封装、码流后期处理的进阶用户。
+> 面向蓝光原盘制作、DTS-HD MA 音轨封装、码流后期处理的进阶用户。
 
 ### 🖼️ 界面预览
 
@@ -161,7 +161,7 @@ EncoderProfiles/          ← 编码设置档（自动生成）
 
 `DTS-HD.Encoder.Avalonia` wraps the command-line **DTS-HD Master Audio Suite** encoding engine (`DtsJobQueue` / `DTSToolFramewrk`) in a modern, DPI-adaptive GUI. It faithfully reverse-engineers the full encoding logic of the official Java GUI (MAS-SAS 2.60.22) and rebuilds the interface on **Avalonia 12 + the WinUIComposition GPU pipeline**, turning "drag in audio → set parameters → get `.dtshd`" into a one-stop flow while keeping line-for-line fidelity with the official `.cfg`.
 
-> Aimed at advanced users doing Blu-ray authoring, DTS-HD MA / DTS:X track muxing, and bitstream post-processing.
+> Aimed at advanced users doing Blu-ray authoring, DTS-HD MA track muxing, and bitstream post-processing.
 
 ### 🖼️ Screenshots
 
