@@ -43,12 +43,12 @@
                  矢量路径随程序编译进 XAML，任何系统（Win10/Win11/Linux）渲染完全一致。
                  - 音频编码：音符图标（Material music_note，Apache-2.0）
                  - StreamTools：均衡器/频谱分析图标（Material graphic_eq，Apache-2.0） -->
-            <fui:NavigationViewItem Content="音频编码" IsSelected="True" Tag="Encode">
+            <fui:NavigationViewItem Content="{DynamicResource Lang.Nav.Encode}" IsSelected="True" Tag="Encode">
                 <fui:NavigationViewItem.IconSource>
                     <fui:PathIconSource Data="M12,3 v10.55 c-0.59,-0.34 -1.27,-0.55 -2,-0.55 c-2.21,0 -4,1.79 -4,4 c0,2.21 1.79,4 4,4 c2.21,0 4,-1.79 4,-4 V7 h4 V3 h-6 z"/>
                 </fui:NavigationViewItem.IconSource>
             </fui:NavigationViewItem>
-            <fui:NavigationViewItem Content="DTS-HD StreamTools" Tag="Stream">
+            <fui:NavigationViewItem Content="{DynamicResource Lang.Nav.Stream}" Tag="Stream">
                 <fui:NavigationViewItem.IconSource>
                     <fui:PathIconSource Data="M7,18 h2 V6 H7 v12 z M11,22 h2 V2 h-2 v20 z M3,14 h2 v-4 H3 v4 z M15,18 h2 V6 h-2 v12 z M19,10 v4 h2 v-4 h-2 z"/>
                 </fui:NavigationViewItem.IconSource>

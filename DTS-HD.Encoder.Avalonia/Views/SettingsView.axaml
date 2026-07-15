@@ -41,21 +41,21 @@
 
             <!-- 标题 -->
             <StackPanel Spacing="2">
-                <TextBlock Text="设置" FontSize="28" FontWeight="SemiBold"/>
-                <TextBlock Text="配置工具集、许可证、外观与运行偏好。" Opacity="0.7"/>
+                <TextBlock Text="{DynamicResource Lang.Settings.Title}" FontSize="28" FontWeight="SemiBold"/>
+                <TextBlock Text="{DynamicResource Lang.Settings.Subtitle}" Opacity="0.7"/>
             </StackPanel>
 
             <!-- ========== 引擎 ========== -->
             <Border Classes="card">
                 <StackPanel Spacing="12">
-                    <TextBlock Text="DTS-HD 引擎 (DtsJobQueue)" FontWeight="SemiBold" FontSize="16"/>
-                    <TextBlock Text="配置 GUI 调用原生引擎所需的 DTS-HD_Tool 目录。" Opacity="0.7"/>
+                    <TextBlock Text="{DynamicResource Lang.Settings.Engine}" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="{DynamicResource Lang.Settings.EngineDesc}" Opacity="0.7"/>
 
                     <!-- 工具集目录行 -->
                     <Grid ColumnDefinitions="120,*,Auto" ColumnSpacing="10">
-                        <TextBlock Grid.Column="0" Text="工具集目录:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource Lang.Settings.ToolDir}" VerticalAlignment="Center"/>
                         <TextBox Grid.Column="1" Text="{Binding ToolDir, Mode=TwoWay}"/>
-                        <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseToolDirCommand}"/>
+                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseToolDirCommand}"/>
                     </Grid>
 
                     <!-- 状态行 -->
@@ -66,9 +66,9 @@
                         </Grid>
                         <TextBlock Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"
                                    Text="{Binding StatusText}"/>
-                        <Button Grid.Column="2" Content="自动检测" Margin="0,0,8,0"
+                        <Button Grid.Column="2" Content="{DynamicResource Lang.Settings.AutoDetect}" Margin="0,0,8,0"
                                 Command="{Binding DetectCommand}"/>
-                        <Button Grid.Column="3" Content="打开目录" Command="{Binding OpenDirCommand}"/>
+                        <Button Grid.Column="3" Content="{DynamicResource Lang.Settings.OpenDir}" Command="{Binding OpenDirCommand}"/>
                     </Grid>
 
                     <!-- 工具存在性清单 -->
@@ -91,25 +91,32 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="保存并重连引擎" Classes="accent" Command="{Binding SaveReconnectCommand}"/>
+                    <Button Content="{DynamicResource Lang.Settings.SaveReconnect}" Classes="accent" Command="{Binding SaveReconnectCommand}"/>
                 </StackPanel>
             </Border>
 
             <!-- ========== 外观 ========== -->
             <Border Classes="card">
                 <StackPanel Spacing="12">
-                    <TextBlock Text="外观" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="{DynamicResource Lang.Settings.Appearance}" FontWeight="SemiBold" FontSize="16"/>
                     <StackPanel Orientation="Horizontal" Spacing="32">
                         <StackPanel Spacing="4">
-                            <TextBlock Text="云母背景"/>
-                            <ToggleSwitch OnContent="开" OffContent="关"
+                            <TextBlock Text="{DynamicResource Lang.Settings.Mica}"/>
+                            <ToggleSwitch OnContent="{DynamicResource Lang.Settings.On}" OffContent="{DynamicResource Lang.Settings.Off}"
                                           IsChecked="{Binding MicaEnabled, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Spacing="4">
-                            <TextBlock Text="主题"/>
+                            <TextBlock Text="{DynamicResource Lang.Settings.Theme}"/>
                             <ComboBox Width="160"
                                       ItemsSource="{Binding ThemeOptions}"
                                       SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"/>
+                        </StackPanel>
+                        <!-- 语言：实时切换简体中文 / 英文 -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Lang.Settings.Language}"/>
+                            <ComboBox Width="160"
+                                      ItemsSource="{Binding LanguageOptions}"
+                                      SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -118,28 +125,29 @@
             <!-- ========== 关于 ========== -->
             <Border Classes="card">
                 <StackPanel Spacing="4">
-                    <TextBlock Text="关于" FontWeight="SemiBold" FontSize="16"/>
+                    <TextBlock Text="{DynamicResource Lang.Settings.About}" FontWeight="SemiBold" FontSize="16"/>
                     <TextBlock Text="DTS-HD Master Audio Suite Encoder" FontWeight="SemiBold"/>
-                    <!-- 版本号绑定 AppVersion（与 csproj Version 一致），改版本只需改一处 -->
-                    <TextBlock Text="{Binding AppVersion, StringFormat='版本 {0} · Avalonia · 驱动 DtsJobQueue 引擎'}" Opacity="0.8"/>
-                    <TextBlock Text="基于原版 MAS-SAS 2.60.22 逆向重写界面" Opacity="0.8"/>
-                    <TextBlock Text="作者：cgyihai / linmeng" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                    <!-- 版本号绑定 AppVersion（与 csproj Version 一致，语言中立文案） -->
+                    <TextBlock Text="{Binding AppVersion, StringFormat='v{0} · Avalonia · DtsJobQueue'}" Opacity="0.8"/>
+                    <TextBlock Text="作者 / Authors：cgyihai / linmeng" FontWeight="SemiBold" Margin="0,4,0,0"/>
                     <!-- 项目主页链接：点击用系统默认浏览器打开 GitHub（查看更新与新构建版本） -->
                     <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="项目主页:" Opacity="0.8" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Lang.Settings.Homepage}" Opacity="0.8" VerticalAlignment="Center"/>
                         <Button Classes="link" Command="{Binding OpenGitHubCommand}"
                                 Content="{Binding GitHubUrl}"
-                                ToolTip.Tip="在浏览器中打开 GitHub 项目主页"/>
+                                ToolTip.Tip="GitHub"/>
                     </StackPanel>
 
                     <!-- 在线更新：点击"检查更新"查询 GitHub 最新 Release；发现新版时出现"前往下载"。 -->
                     <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0" VerticalAlignment="Center">
-                        <Button Content="检查更新" Command="{Binding CheckUpdateCommand}"/>
-                        <Button Classes="link" Content="前往下载" Command="{Binding OpenDownloadCommand}"
-                                IsVisible="{Binding UpdateAvailable}"
-                                ToolTip.Tip="在浏览器中打开新版本发布页"/>
+                        <Button Content="{DynamicResource Lang.Settings.CheckUpdate}" Command="{Binding CheckUpdateCommand}"/>
+                        <Button Classes="link" Content="{DynamicResource Lang.Settings.OpenDownload}" Command="{Binding OpenDownloadCommand}"
+                                IsVisible="{Binding UpdateAvailable}"/>
                         <TextBlock Text="{Binding UpdateStatus}" Opacity="0.8" VerticalAlignment="Center" TextWrapping="Wrap"/>
                     </StackPanel>
+                    <!-- 启动时自动检查更新开关 -->
+                    <CheckBox Content="{DynamicResource Lang.Settings.AutoCheckUpdate}" Margin="0,4,0,0"
+                              IsChecked="{Binding AutoCheckUpdate, Mode=TwoWay}"/>
                 </StackPanel>
             </Border>
 

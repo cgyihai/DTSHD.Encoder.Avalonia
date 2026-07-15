@@ -20,6 +20,8 @@ public sealed class AppSettings
     public bool KeepTempFiles { get; set; } = false;
     public bool AutoSelectNext { get; set; } = true;
     public int LogLines { get; set; } = 800;
+    /// <summary>启动时自动检查 GitHub 新版本（默认开启；仅在发现更新时提示）。</summary>
+    public bool AutoCheckUpdate { get; set; } = true;
 
     private static string ConfigPath =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

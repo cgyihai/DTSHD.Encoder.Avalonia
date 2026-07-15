@@ -6,9 +6,9 @@
     <RootNamespace>DTSHD.Encoder.Avalonia</RootNamespace>
     <AssemblyName>DTS-HD.Encoder.Avalonia</AssemblyName>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>1.0.1</Version>
-    <FileVersion>1.0.1.0</FileVersion>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <Version>1.0.2</Version>
+    <FileVersion>1.0.2.0</FileVersion>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <!-- 启用编译时绑定（性能 + 静态类型检查），与 Avalonia-Fluent-UI Gallery 一致 -->
@@ -49,6 +49,9 @@
     <AvaloniaResource Include="Themes\Dark.axaml" />
     <AvaloniaResource Include="Themes\Light.axaml" />
     <AvaloniaResource Include="Controls\CardStyle.axaml" />
+    <!-- 多语言字符串资源字典（运行时按语言切换合并） -->
+    <AvaloniaResource Include="Assets\Lang\zh-Hans.axaml" />
+    <AvaloniaResource Include="Assets\Lang\en.axaml" />
   </ItemGroup>
 
   <!-- 生成后在程序输出目录创建 EncoderProfiles 文件夹，用于存放编码页面的设置档 -->

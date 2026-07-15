@@ -1,0 +1,179 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="using:System">
+
+    <!-- Navigation -->
+    <sys:String x:Key="Lang.Nav.Encode">Audio Encode</sys:String>
+    <sys:String x:Key="Lang.Nav.Stream">DTS-HD StreamTools</sys:String>
+
+    <!-- Common -->
+    <sys:String x:Key="Lang.Common.Browse">Browse…</sys:String>
+
+    <!-- Encode page -->
+    <sys:String x:Key="Lang.Encode.Title">Audio Encode</sys:String>
+    <sys:String x:Key="Lang.Encode.Subtitle">Choose input, set parameters, write the .cfg and submit to the DtsJobQueue engine.</sys:String>
+    <sys:String x:Key="Lang.Encode.ResetDefaults">Reset Defaults</sys:String>
+    <sys:String x:Key="Lang.Encode.LoadSettings">Load Settings</sys:String>
+    <sys:String x:Key="Lang.Encode.SaveSettings">Save Settings</sys:String>
+    <sys:String x:Key="Lang.Encode.SaveSettingsAs">Save Settings As</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionInputOutput">Input / Output</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionEncodeSettings">Encode Settings</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionTimecode">Timecode</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionBitstream">Bitstream / Metadata</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionDownmix">Downmix</sys:String>
+    <sys:String x:Key="Lang.Encode.Start">Start Encode</sys:String>
+    <sys:String x:Key="Lang.Encode.Stop">Stop Encode</sys:String>
+    <sys:String x:Key="Lang.Encode.OpenQueue">Open Queue</sys:String>
+    <sys:String x:Key="Lang.Encode.PreviewCfg">Preview .cfg</sys:String>
+    <sys:String x:Key="Lang.Encode.PreviewCmd">Preview Command</sys:String>
+    <sys:String x:Key="Lang.Encode.ViewLog">View Log</sys:String>
+
+    <!-- StreamTools page -->
+    <sys:String x:Key="Lang.Stream.Title">DTS-HD StreamTools</sys:String>
+    <sys:String x:Key="Lang.Stream.Subtitle">Info / verify / split / join / trim / add-silence / restripe / metadata and more on encoded .dtshd/.cpt bitstreams (native DTSToolFramewrk engine, module T).</sys:String>
+
+    <!-- Settings page -->
+    <sys:String x:Key="Lang.Settings.Title">Settings</sys:String>
+    <sys:String x:Key="Lang.Settings.Subtitle">Configure the toolset, license, appearance and runtime preferences.</sys:String>
+    <sys:String x:Key="Lang.Settings.Engine">DTS-HD Engine (DtsJobQueue)</sys:String>
+    <sys:String x:Key="Lang.Settings.EngineDesc">Configure the DTS-HD_Tool directory the GUI uses to drive the native engine.</sys:String>
+    <sys:String x:Key="Lang.Settings.ToolDir">Toolset directory:</sys:String>
+    <sys:String x:Key="Lang.Settings.AutoDetect">Auto-detect</sys:String>
+    <sys:String x:Key="Lang.Settings.OpenDir">Open folder</sys:String>
+    <sys:String x:Key="Lang.Settings.SaveReconnect">Save &amp; reconnect engine</sys:String>
+    <sys:String x:Key="Lang.Settings.Appearance">Appearance</sys:String>
+    <sys:String x:Key="Lang.Settings.Mica">Mica backdrop</sys:String>
+    <sys:String x:Key="Lang.Settings.Theme">Theme</sys:String>
+    <sys:String x:Key="Lang.Settings.Language">Language</sys:String>
+    <sys:String x:Key="Lang.Settings.On">On</sys:String>
+    <sys:String x:Key="Lang.Settings.Off">Off</sys:String>
+    <sys:String x:Key="Lang.Settings.About">About</sys:String>
+    <sys:String x:Key="Lang.Settings.Homepage">Homepage:</sys:String>
+    <sys:String x:Key="Lang.Settings.CheckUpdate">Check for updates</sys:String>
+    <sys:String x:Key="Lang.Settings.OpenDownload">Download</sys:String>
+
+    <!-- 编码页/StreamTools 完整字段（自动生成） -->
+    <sys:String x:Key="Lang.T0">Drag audio files here to import. In split mode, dropping any channel (name_L / name-L / name.L…) auto-detects the other channels with the same base name in the folder.</sys:String>
+    <sys:String x:Key="Lang.T1">Single-file input</sys:String>
+    <sys:String x:Key="Lang.T2">Split input (one file per channel)</sys:String>
+    <sys:String x:Key="Lang.T3">Channel layout:</sys:String>
+    <sys:String x:Key="Lang.T4">Clear all</sys:String>
+    <sys:String x:Key="Lang.T5">Layout</sys:String>
+    <sys:String x:Key="Lang.T6">File</sys:String>
+    <sys:String x:Key="Lang.T7">Ch</sys:String>
+    <sys:String x:Key="Lang.T8">Bits</sys:String>
+    <sys:String x:Key="Lang.T9">Rate</sys:String>
+    <sys:String x:Key="Lang.T10">Duration</sys:String>
+    <sys:String x:Key="Lang.T11">Multichannel .wav (RIFF WAV, up to 7.1)</sys:String>
+    <sys:String x:Key="Lang.T12">Channels (from WAV header)</sys:String>
+    <sys:String x:Key="Lang.T13">Bit-depth (from WAV header)</sys:String>
+    <sys:String x:Key="Lang.T14">Sample rate (from WAV header)</sys:String>
+    <sys:String x:Key="Lang.T15">Duration (from WAV header)</sys:String>
+    <sys:String x:Key="Lang.T17">Channel file</sys:String>
+    <sys:String x:Key="Lang.T18">Output</sys:String>
+    <sys:String x:Key="Lang.T19">Target format</sys:String>
+    <sys:String x:Key="Lang.T20">Stream type</sys:String>
+    <sys:String x:Key="Lang.T21">Encode type</sys:String>
+    <sys:String x:Key="Lang.T22">Sample rate (Hz)</sys:String>
+    <sys:String x:Key="Lang.T23">Core bitrate (kbps)</sys:String>
+    <sys:String x:Key="Lang.T24">Dialog normalization:</sys:String>
+    <sys:String x:Key="Lang.T25">TC frame rate</sys:String>
+    <sys:String x:Key="Lang.T26">Start time</sys:String>
+    <sys:String x:Key="Lang.T27">End time</sys:String>
+    <sys:String x:Key="Lang.T28">Encode entire file</sys:String>
+    <sys:String x:Key="Lang.T29">Encode from</sys:String>
+    <sys:String x:Key="Lang.T30">Encode to</sys:String>
+    <sys:String x:Key="Lang.T31">Use reference TC</sys:String>
+    <sys:String x:Key="Lang.T32">Reference TC</sys:String>
+    <sys:String x:Key="Lang.T33">Primary audio attenuation (Static)</sys:String>
+    <sys:String x:Key="Lang.T34">Enable primary audio attenuation</sys:String>
+    <sys:String x:Key="Lang.T35">Mono secondary audio – channel output mapping</sys:String>
+    <sys:String x:Key="Lang.T36">Embed AAF metadata</sys:String>
+    <sys:String x:Key="Lang.T37">Attenuation:</sys:String>
+    <sys:String x:Key="Lang.T38">AAF file:</sys:String>
+    <sys:String x:Key="Lang.T39">Panning</sys:String>
+    <sys:String x:Key="Lang.T40">Single Clip</sys:String>
+    <sys:String x:Key="Lang.T41">Use CSV branch points</sys:String>
+    <sys:String x:Key="Lang.T42">CSV file:</sys:String>
+    <sys:String x:Key="Lang.T43">Express dialog mode</sys:String>
+    <sys:String x:Key="Lang.T44">7.1 Wide remapping</sys:String>
+    <sys:String x:Key="Lang.T45">Program Info</sys:String>
+    <sys:String x:Key="Lang.T46">Optional</sys:String>
+    <sys:String x:Key="Lang.T47">Downmix to 5.1 (6.1/7.1 → 5.1)</sys:String>
+    <sys:String x:Key="Lang.T48">Enable</sys:String>
+    <sys:String x:Key="Lang.T49">Keep current channels (primary)</sys:String>
+    <sys:String x:Key="Lang.T50">Use Legacy Matrix</sys:String>
+    <sys:String x:Key="Lang.T51">Downmix to 2.0</sys:String>
+    <sys:String x:Key="Lang.T52">Saturation check</sys:String>
+    <sys:String x:Key="Lang.T53">Embedded downmix</sys:String>
+    <sys:String x:Key="Lang.T54">Info</sys:String>
+    <sys:String x:Key="Lang.T55">Read stream info (InfoDumper / T I)</sys:String>
+    <sys:String x:Key="Lang.T56">Select .dtshd / .cpt</sys:String>
+    <sys:String x:Key="Lang.T57">Read info</sys:String>
+    <sys:String x:Key="Lang.T58">Verify</sys:String>
+    <sys:String x:Key="Lang.T59">Verify stream (DTSHDVerify.exe)</sys:String>
+    <sys:String x:Key="Lang.T60">Split</sys:String>
+    <sys:String x:Key="Lang.T61">Split into two files by timecode (T S)</sys:String>
+    <sys:String x:Key="Lang.T62">Input</sys:String>
+    <sys:String x:Key="Lang.T63">Split timecode</sys:String>
+    <sys:String x:Key="Lang.T64">Output 1</sys:String>
+    <sys:String x:Key="Lang.T65">Output 2</sys:String>
+    <sys:String x:Key="Lang.T66">Join</sys:String>
+    <sys:String x:Key="Lang.T67">Join two bitstreams (T J)</sys:String>
+    <sys:String x:Key="Lang.T68">File 1</sys:String>
+    <sys:String x:Key="Lang.T69">File 2</sys:String>
+    <sys:String x:Key="Lang.T70">Trim</sys:String>
+    <sys:String x:Key="Lang.T71">Trim by start/end timecode (T T)</sys:String>
+    <sys:String x:Key="Lang.T72">Start</sys:String>
+    <sys:String x:Key="Lang.T73">End</sys:String>
+    <sys:String x:Key="Lang.T74">Add Silence</sys:String>
+    <sys:String x:Key="Lang.T75">Add head/tail silence and reset start timecode (T N)</sys:String>
+    <sys:String x:Key="Lang.T76">Head silence</sys:String>
+    <sys:String x:Key="Lang.T77">Tail silence</sys:String>
+    <sys:String x:Key="Lang.T78">New start TC</sys:String>
+    <sys:String x:Key="Lang.T79">Restripe</sys:String>
+    <sys:String x:Key="Lang.T80">Restripe with a new frame rate / start timecode (T R) · original TC / frame rate read automatically on file select</sys:String>
+    <sys:String x:Key="Lang.T81">Original:</sys:String>
+    <sys:String x:Key="Lang.T82">Start TC</sys:String>
+    <sys:String x:Key="Lang.T83">· Frame rate</sys:String>
+    <sys:String x:Key="Lang.T84">New frame rate</sys:String>
+    <sys:String x:Key="Lang.T85">Metadata</sys:String>
+    <sys:String x:Key="Lang.T86">Change dialnorm / frame rate / start timecode (T M) · original values read automatically on file select</sys:String>
+    <sys:String x:Key="Lang.T87">Dialog normalization</sys:String>
+    <sys:String x:Key="Lang.T88">Write metadata</sys:String>
+    <sys:String x:Key="Lang.T89">Append</sys:String>
+    <sys:String x:Key="Lang.T90">Append-join multiple files by their own start/end timecodes (T A)</sys:String>
+    <sys:String x:Key="Lang.T91">Input files (in append order, each with its own start/end timecode)</sys:String>
+    <sys:String x:Key="Lang.T92">＋ Add file row</sys:String>
+    <sys:String x:Key="Lang.T93">PBR Analysis</sys:String>
+    <sys:String x:Key="Lang.T94">Peak bit-rate analysis: generate .dtspbr and plot the curve (T P)</sys:String>
+    <sys:String x:Key="Lang.T95">Select .dtshd</sys:String>
+    <sys:String x:Key="Lang.T96">Analyze</sys:String>
+    <sys:String x:Key="Lang.T97">Peak Bit Rate Schedule — timecode vs kbps</sys:String>
+    <sys:String x:Key="Lang.T98">Raw Command</sys:String>
+    <sys:String x:Key="Lang.T99">Advanced: send a raw T command (for operations not yet in the UI)</sys:String>
+    <sys:String x:Key="Lang.T100">Send</sys:String>
+    <sys:String x:Key="Lang.T101">Cancel operation (T Z)</sys:String>
+    <sys:String x:Key="Lang.T102">Tool response / log</sys:String>
+
+    <!-- VM 动态状态文案 -->
+    <sys:String x:Key="Lang.Theme.System">System</sys:String>
+    <sys:String x:Key="Lang.Theme.Light">Light</sys:String>
+    <sys:String x:Key="Lang.Theme.Dark">Dark</sys:String>
+    <sys:String x:Key="Lang.Eng.Connecting">Connecting to engine…</sys:String>
+    <sys:String x:Key="Lang.Eng.NotReady">Toolset not ready · configure the DTS-HD_Tool directory in Settings</sys:String>
+    <sys:String x:Key="Lang.Eng.Connected">Engine connected · {0}</sys:String>
+    <sys:String x:Key="Lang.St.EngNotReady">Toolset not ready · configure DTS-HD_Tool in Settings (needs DTSToolFramewrk.exe)</sys:String>
+    <sys:String x:Key="Lang.St.EngConnected">StreamTools engine connected</sys:String>
+    <sys:String x:Key="Lang.St.EngIdle">Toolset ready · StreamTools (connects automatically on operation)</sys:String>
+    <sys:String x:Key="Lang.Set.NotDetected">Not detected</sys:String>
+    <sys:String x:Key="Lang.Set.ToolReady">Toolset ready · DtsJobQueue and DTSEncConfig found</sys:String>
+    <sys:String x:Key="Lang.Set.ToolIncomplete">Toolset incomplete · check the DTS-HD_Tool directory</sys:String>
+
+    <!-- 自动检查更新 -->
+    <sys:String x:Key="Lang.Settings.AutoCheckUpdate">Check for updates at startup</sys:String>
+    <sys:String x:Key="Lang.Update.FoundTitle">Update available</sys:String>
+    <sys:String x:Key="Lang.Update.FoundBody">Version {0} is available (current {1}). Open the download page?</sys:String>
+    <sys:String x:Key="Lang.Update.Later">Later</sys:String>
+</ResourceDictionary>

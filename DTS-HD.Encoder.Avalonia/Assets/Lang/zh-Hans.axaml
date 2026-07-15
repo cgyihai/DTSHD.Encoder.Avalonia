@@ -1,0 +1,179 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="using:System">
+
+    <!-- 导航 -->
+    <sys:String x:Key="Lang.Nav.Encode">音频编码</sys:String>
+    <sys:String x:Key="Lang.Nav.Stream">DTS-HD StreamTools</sys:String>
+
+    <!-- 通用 -->
+    <sys:String x:Key="Lang.Common.Browse">浏览…</sys:String>
+
+    <!-- 编码页 -->
+    <sys:String x:Key="Lang.Encode.Title">音频编码</sys:String>
+    <sys:String x:Key="Lang.Encode.Subtitle">选择输入，设置参数，写出 .cfg 并提交 DtsJobQueue 引擎编码。</sys:String>
+    <sys:String x:Key="Lang.Encode.ResetDefaults">恢复默认</sys:String>
+    <sys:String x:Key="Lang.Encode.LoadSettings">加载设置</sys:String>
+    <sys:String x:Key="Lang.Encode.SaveSettings">保存设置</sys:String>
+    <sys:String x:Key="Lang.Encode.SaveSettingsAs">设置另存为</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionInputOutput">输入 / 输出</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionEncodeSettings">编码设置</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionTimecode">时间码设置 (Timecode)</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionBitstream">比特流 (Bitstream / 元数据)</sys:String>
+    <sys:String x:Key="Lang.Encode.SectionDownmix">下混 (Downmix)</sys:String>
+    <sys:String x:Key="Lang.Encode.Start">开始编码</sys:String>
+    <sys:String x:Key="Lang.Encode.Stop">终止编码</sys:String>
+    <sys:String x:Key="Lang.Encode.OpenQueue">打开编码队列</sys:String>
+    <sys:String x:Key="Lang.Encode.PreviewCfg">预览 .cfg</sys:String>
+    <sys:String x:Key="Lang.Encode.PreviewCmd">预览命令</sys:String>
+    <sys:String x:Key="Lang.Encode.ViewLog">查看日志</sys:String>
+
+    <!-- StreamTools 页 -->
+    <sys:String x:Key="Lang.Stream.Title">DTS-HD StreamTools</sys:String>
+    <sys:String x:Key="Lang.Stream.Subtitle">对已编码的 .dtshd/.cpt 码流做信息/校验/拆分/合并/裁剪/加静音/重打时间码/元数据等处理（原生 DTSToolFramewrk 引擎，模块 T）。</sys:String>
+
+    <!-- 设置页 -->
+    <sys:String x:Key="Lang.Settings.Title">设置</sys:String>
+    <sys:String x:Key="Lang.Settings.Subtitle">配置工具集、许可证、外观与运行偏好。</sys:String>
+    <sys:String x:Key="Lang.Settings.Engine">DTS-HD 引擎 (DtsJobQueue)</sys:String>
+    <sys:String x:Key="Lang.Settings.EngineDesc">配置 GUI 调用原生引擎所需的 DTS-HD_Tool 目录。</sys:String>
+    <sys:String x:Key="Lang.Settings.ToolDir">工具集目录:</sys:String>
+    <sys:String x:Key="Lang.Settings.AutoDetect">自动检测</sys:String>
+    <sys:String x:Key="Lang.Settings.OpenDir">打开目录</sys:String>
+    <sys:String x:Key="Lang.Settings.SaveReconnect">保存并重连引擎</sys:String>
+    <sys:String x:Key="Lang.Settings.Appearance">外观</sys:String>
+    <sys:String x:Key="Lang.Settings.Mica">云母背景</sys:String>
+    <sys:String x:Key="Lang.Settings.Theme">主题</sys:String>
+    <sys:String x:Key="Lang.Settings.Language">语言</sys:String>
+    <sys:String x:Key="Lang.Settings.On">开</sys:String>
+    <sys:String x:Key="Lang.Settings.Off">关</sys:String>
+    <sys:String x:Key="Lang.Settings.About">关于</sys:String>
+    <sys:String x:Key="Lang.Settings.Homepage">项目主页:</sys:String>
+    <sys:String x:Key="Lang.Settings.CheckUpdate">检查更新</sys:String>
+    <sys:String x:Key="Lang.Settings.OpenDownload">前往下载</sys:String>
+
+    <!-- 编码页/StreamTools 完整字段（自动生成） -->
+    <sys:String x:Key="Lang.T0">可将音频文件拖入此处导入。分轨模式下拖入任一声道（名_L/名-L/名.L…）会自动识别同目录同名其它声道。</sys:String>
+    <sys:String x:Key="Lang.T1">单文件输入</sys:String>
+    <sys:String x:Key="Lang.T2">分轨输入（各声道独立文件）</sys:String>
+    <sys:String x:Key="Lang.T3">声道布局:</sys:String>
+    <sys:String x:Key="Lang.T4">全部清除</sys:String>
+    <sys:String x:Key="Lang.T5">布局图示</sys:String>
+    <sys:String x:Key="Lang.T6">文件</sys:String>
+    <sys:String x:Key="Lang.T7">声道</sys:String>
+    <sys:String x:Key="Lang.T8">位宽</sys:String>
+    <sys:String x:Key="Lang.T9">采样率</sys:String>
+    <sys:String x:Key="Lang.T10">时长</sys:String>
+    <sys:String x:Key="Lang.T11">多声道 .wav (RIFF WAV, 最高 7.1)</sys:String>
+    <sys:String x:Key="Lang.T12">声道数（从 WAV 头读取）</sys:String>
+    <sys:String x:Key="Lang.T13">位宽（从 WAV 头读取）</sys:String>
+    <sys:String x:Key="Lang.T14">采样率（从 WAV 头读取）</sys:String>
+    <sys:String x:Key="Lang.T15">时长（从 WAV 头读取）</sys:String>
+    <sys:String x:Key="Lang.T17">声道文件</sys:String>
+    <sys:String x:Key="Lang.T18">输出</sys:String>
+    <sys:String x:Key="Lang.T19">目标格式</sys:String>
+    <sys:String x:Key="Lang.T20">流类型</sys:String>
+    <sys:String x:Key="Lang.T21">编码类型</sys:String>
+    <sys:String x:Key="Lang.T22">采样率 (Hz)</sys:String>
+    <sys:String x:Key="Lang.T23">核心码率 (kbps)</sys:String>
+    <sys:String x:Key="Lang.T24">对白归一化:</sys:String>
+    <sys:String x:Key="Lang.T25">TC 帧率</sys:String>
+    <sys:String x:Key="Lang.T26">开始时间</sys:String>
+    <sys:String x:Key="Lang.T27">结束时间</sys:String>
+    <sys:String x:Key="Lang.T28">编码整个文件</sys:String>
+    <sys:String x:Key="Lang.T29">编码自</sys:String>
+    <sys:String x:Key="Lang.T30">编码至</sys:String>
+    <sys:String x:Key="Lang.T31">启用参考 TC</sys:String>
+    <sys:String x:Key="Lang.T32">参考 TC</sys:String>
+    <sys:String x:Key="Lang.T33">主音频衰减 (Static)</sys:String>
+    <sys:String x:Key="Lang.T34">启用主音频衰减</sys:String>
+    <sys:String x:Key="Lang.T35">单声道次音频 - 声道输出映射</sys:String>
+    <sys:String x:Key="Lang.T36">嵌入 AAF 元数据</sys:String>
+    <sys:String x:Key="Lang.T37">衰减方式:</sys:String>
+    <sys:String x:Key="Lang.T38">AAF 文件:</sys:String>
+    <sys:String x:Key="Lang.T39">声像 (Panning)</sys:String>
+    <sys:String x:Key="Lang.T40">单一剪辑 (Single Clip)</sys:String>
+    <sys:String x:Key="Lang.T41">使用 CSV 分支点</sys:String>
+    <sys:String x:Key="Lang.T42">CSV 文件:</sys:String>
+    <sys:String x:Key="Lang.T43">Express 对话模式</sys:String>
+    <sys:String x:Key="Lang.T44">7.1 Wide 重映射</sys:String>
+    <sys:String x:Key="Lang.T45">程序信息 (Program Info)</sys:String>
+    <sys:String x:Key="Lang.T46">可选</sys:String>
+    <sys:String x:Key="Lang.T47">下混到 5.1 (6.1/7.1 → 5.1)</sys:String>
+    <sys:String x:Key="Lang.T48">启用</sys:String>
+    <sys:String x:Key="Lang.T49">保留当前声道(primary)</sys:String>
+    <sys:String x:Key="Lang.T50">使用 Legacy Matrix</sys:String>
+    <sys:String x:Key="Lang.T51">下混到 2.0</sys:String>
+    <sys:String x:Key="Lang.T52">饱和检测</sys:String>
+    <sys:String x:Key="Lang.T53">嵌入下混</sys:String>
+    <sys:String x:Key="Lang.T54">信息</sys:String>
+    <sys:String x:Key="Lang.T55">读取码流信息 (InfoDumper / T I)</sys:String>
+    <sys:String x:Key="Lang.T56">选择 .dtshd / .cpt</sys:String>
+    <sys:String x:Key="Lang.T57">读取信息</sys:String>
+    <sys:String x:Key="Lang.T58">校验</sys:String>
+    <sys:String x:Key="Lang.T59">校验码流 (DTSHDVerify.exe)</sys:String>
+    <sys:String x:Key="Lang.T60">拆分</sys:String>
+    <sys:String x:Key="Lang.T61">按时间码拆分为两个文件 (T S)</sys:String>
+    <sys:String x:Key="Lang.T62">输入</sys:String>
+    <sys:String x:Key="Lang.T63">拆分时间码</sys:String>
+    <sys:String x:Key="Lang.T64">输出 1</sys:String>
+    <sys:String x:Key="Lang.T65">输出 2</sys:String>
+    <sys:String x:Key="Lang.T66">合并</sys:String>
+    <sys:String x:Key="Lang.T67">合并两个码流 (T J)</sys:String>
+    <sys:String x:Key="Lang.T68">文件 1</sys:String>
+    <sys:String x:Key="Lang.T69">文件 2</sys:String>
+    <sys:String x:Key="Lang.T70">裁剪</sys:String>
+    <sys:String x:Key="Lang.T71">按起止时间码裁剪 (T T)</sys:String>
+    <sys:String x:Key="Lang.T72">开始</sys:String>
+    <sys:String x:Key="Lang.T73">结束</sys:String>
+    <sys:String x:Key="Lang.T74">加静音</sys:String>
+    <sys:String x:Key="Lang.T75">在头/尾添加静音并重设起始时间码 (T N)</sys:String>
+    <sys:String x:Key="Lang.T76">头部静音</sys:String>
+    <sys:String x:Key="Lang.T77">尾部静音</sys:String>
+    <sys:String x:Key="Lang.T78">新起始TC</sys:String>
+    <sys:String x:Key="Lang.T79">重打时间码</sys:String>
+    <sys:String x:Key="Lang.T80">按新帧率/起始时间码重打 (T R) · 选择文件后自动读取原始时间码/帧率</sys:String>
+    <sys:String x:Key="Lang.T81">原始值:</sys:String>
+    <sys:String x:Key="Lang.T82">起始TC</sys:String>
+    <sys:String x:Key="Lang.T83">· 帧率</sys:String>
+    <sys:String x:Key="Lang.T84">新帧率</sys:String>
+    <sys:String x:Key="Lang.T85">元数据</sys:String>
+    <sys:String x:Key="Lang.T86">修改对话归一化 / 帧率 / 起始时间码 (T M) · 选择文件后自动读取原始值</sys:String>
+    <sys:String x:Key="Lang.T87">对话归一化</sys:String>
+    <sys:String x:Key="Lang.T88">写入元数据</sys:String>
+    <sys:String x:Key="Lang.T89">追加合并</sys:String>
+    <sys:String x:Key="Lang.T90">将多个文件按各自起止时间码顺序追加合并 (T A)</sys:String>
+    <sys:String x:Key="Lang.T91">输入文件（按合并顺序，含各自起止时间码）</sys:String>
+    <sys:String x:Key="Lang.T92">＋ 添加文件行</sys:String>
+    <sys:String x:Key="Lang.T93">PBR 分析</sys:String>
+    <sys:String x:Key="Lang.T94">峰值比特率分析：生成 .dtspbr 并绘制曲线 (T P)</sys:String>
+    <sys:String x:Key="Lang.T95">选择 .dtshd</sys:String>
+    <sys:String x:Key="Lang.T96">分析</sys:String>
+    <sys:String x:Key="Lang.T97">Peak Bit Rate Schedule — 时间码 vs kbps</sys:String>
+    <sys:String x:Key="Lang.T98">原始命令</sys:String>
+    <sys:String x:Key="Lang.T99">高级：直接发送 T 命令（用于尚未做成界面的操作）</sys:String>
+    <sys:String x:Key="Lang.T100">发送</sys:String>
+    <sys:String x:Key="Lang.T101">取消操作 (T Z)</sys:String>
+    <sys:String x:Key="Lang.T102">工具响应 / 日志</sys:String>
+
+    <!-- VM 动态状态文案 -->
+    <sys:String x:Key="Lang.Theme.System">跟随系统</sys:String>
+    <sys:String x:Key="Lang.Theme.Light">浅色</sys:String>
+    <sys:String x:Key="Lang.Theme.Dark">深色</sys:String>
+    <sys:String x:Key="Lang.Eng.Connecting">正在连接引擎…</sys:String>
+    <sys:String x:Key="Lang.Eng.NotReady">工具集未就绪 · 请到「设置」配置 DTS-HD_Tool 目录</sys:String>
+    <sys:String x:Key="Lang.Eng.Connected">引擎已连接 · {0}</sys:String>
+    <sys:String x:Key="Lang.St.EngNotReady">工具集未就绪 · 请到「设置」配置 DTS-HD_Tool（需 DTSToolFramewrk.exe）</sys:String>
+    <sys:String x:Key="Lang.St.EngConnected">StreamTools 引擎已连接</sys:String>
+    <sys:String x:Key="Lang.St.EngIdle">工具集就绪 · StreamTools（操作时自动连接）</sys:String>
+    <sys:String x:Key="Lang.Set.NotDetected">未检测</sys:String>
+    <sys:String x:Key="Lang.Set.ToolReady">工具集就绪 · DtsJobQueue 与 DTSEncConfig 已找到</sys:String>
+    <sys:String x:Key="Lang.Set.ToolIncomplete">工具集不完整 · 请确认 DTS-HD_Tool 目录</sys:String>
+
+    <!-- 自动检查更新 -->
+    <sys:String x:Key="Lang.Settings.AutoCheckUpdate">启动时检查更新</sys:String>
+    <sys:String x:Key="Lang.Update.FoundTitle">发现新版本</sys:String>
+    <sys:String x:Key="Lang.Update.FoundBody">发现新版本 {0}（当前 {1}）。是否前往下载？</sys:String>
+    <sys:String x:Key="Lang.Update.Later">稍后</sys:String>
+</ResourceDictionary>

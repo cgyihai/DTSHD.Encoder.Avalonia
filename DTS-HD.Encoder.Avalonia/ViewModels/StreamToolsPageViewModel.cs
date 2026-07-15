@@ -111,11 +111,22 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
     [ObservableProperty] private string _reFile = "";
     [ObservableProperty] private string _reStart = "00:00:00:00";
     [ObservableProperty] private int _selectedReFpsIndex;
+    // 原始值（只读显示）：选择文件后自动读取该码流当前的起始 TC / 帧率（对应官方 T F 查询）。
+    [ObservableProperty] private string _reOriginalStart = "-";
+    [ObservableProperty] private string _reOriginalFps = "-";
     // —— Metadata ——
     [ObservableProperty] private string _metaFile = "";
     [ObservableProperty] private string _metaStart = "00:00:00:00";
     [ObservableProperty] private string _metaDialNorm = "-31";
     [ObservableProperty] private int _selectedMetaFpsIndex;
+    // 原始值（只读显示）：起始 TC / 帧率 / 对白归一化（对应官方 T F 查询返回的三项）。
+    [ObservableProperty] private string _metaOriginalStart = "-";
+    [ObservableProperty] private string _metaOriginalFps = "-";
+    [ObservableProperty] private string _metaOriginalDialNorm = "-";
+
+    /// <summary>当前 T F（读取文件元数据）请求归属的面板，用于把 T F E 响应回填到对应面板。</summary>
+    private enum MetaTarget { None, Restripe, Metadata }
+    private MetaTarget _pendingMetaTarget = MetaTarget.None;
     // —— Append ——
     [ObservableProperty] private string _appendOut = "";
     /// <summary>追加合并输入行集合（对应 WinUI3 AppendRows StackPanel 动态行）。</summary>
@@ -139,6 +150,8 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
         AddAppendRow();          // 预置一行（对应 WinUI3 OnAddAppendRow(this, null!)）
         if (Tools != null) Tools.RawResponse += OnRawResponse;
         AppServices.EngineStateChanged += OnEngineState;
+        // 语言切换时重新本地化引擎状态文本
+        LocalizationManager.LanguageChanged += () => Post(UpdateStatus);
     }
 
     // =========================================================
@@ -166,7 +179,7 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
         if (!ok)
         {
             // 失败/未加载：红色 + ✗
-            EngineStatusText = "工具集未就绪 · 请到「设置」配置 DTS-HD_Tool（需 DTSToolFramewrk.exe）";
+            EngineStatusText = LocalizationManager.Get("Lang.St.EngNotReady", "工具集未就绪 · 请到「设置」配置 DTS-HD_Tool（需 DTSToolFramewrk.exe）");
             EngineStatusForeground = Brushes.OrangeRed;
             EngineRingActive = false;
             IsEngineConnected = false; IsEngineConnecting = false; IsEngineFailed = true;
@@ -174,7 +187,7 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
         else if (connected)
         {
             // 已连接：绿色 + ✓
-            EngineStatusText = "StreamTools 引擎已连接";
+            EngineStatusText = LocalizationManager.Get("Lang.St.EngConnected", "StreamTools 引擎已连接");
             EngineStatusForeground = Brushes.SeaGreen;
             EngineRingActive = false;
             IsEngineConnected = true; IsEngineConnecting = false; IsEngineFailed = false;
@@ -182,7 +195,7 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
         else
         {
             // 工具集就绪但未连接：黄色 + ProgressRing（操作时自动连接）
-            EngineStatusText = "工具集就绪 · StreamTools（操作时自动连接）";
+            EngineStatusText = LocalizationManager.Get("Lang.St.EngIdle", "工具集就绪 · StreamTools（操作时自动连接）");
             EngineStatusForeground = Brushes.Goldenrod;
             EngineRingActive = true;
             IsEngineConnected = false; IsEngineConnecting = true; IsEngineFailed = false;
@@ -206,6 +219,10 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
 
         // PBR 分析有独立的进度/结果语义（T P M/S/C/E）
         if (tok[1] == "P") { HandlePbrResponse(tok, p); return; }
+
+        // 文件元数据查询回执（T F E <start> <fps> [<dialnorm>] / T F X <error>）——
+        // 用于 Restripe/Metadata 面板选择文件后自动回填“原始值”并预填“新值”。
+        if (tok[1] == "F") { HandleFileMetaResponse(tok); return; }
 
         string phase = tok[2];      // S=开始, E=结束, C=完成
         if (phase == "S")
@@ -376,6 +393,88 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
     {
         if (!RequireFields(MetaFile)) return;
         if (EngineOk()) await SendToolAsync(ToolsCommands.Metadata(MetaFile, MetaStart, MetaFps, MetaDialNorm));
+    }
+
+    // ===== 选择文件后自动读取原始元数据（对应官方在文件选中时发 T F 查询）=====
+    partial void OnReFileChanged(string value) => _ = LoadFileMetaAsync(MetaTarget.Restripe, value);
+    partial void OnMetaFileChanged(string value) => _ = LoadFileMetaAsync(MetaTarget.Metadata, value);
+
+    /// <summary>向引擎查询指定码流的当前 TC/帧率/对白归一化（T F），响应在 HandleFileMetaResponse 回填。</summary>
+    private async Task LoadFileMetaAsync(MetaTarget target, string? file)
+    {
+        var f = file?.Trim() ?? "";
+        // 清空旧的原始值显示
+        if (target == MetaTarget.Restripe) { ReOriginalStart = ReOriginalFps = "-"; }
+        else { MetaOriginalStart = MetaOriginalFps = MetaOriginalDialNorm = "-"; }
+
+        if (string.IsNullOrEmpty(f) || !File.Exists(f)) return;
+        var tools = Tools;
+        if (tools == null || !ToolsetReady) return;
+        try
+        {
+            if (!await tools.EnsureConnectedAsync()) return;
+            _pendingMetaTarget = target;
+            tools.Send(ToolsCommands.FileMetadata(f));
+        }
+        catch { /* 查询失败不影响手动填写 */ }
+    }
+
+    /// <summary>解析 T F 响应并回填原始值 + 预填新值（对应官方 RestripePanel/MetadataPanel 的 T F E 处理）。</summary>
+    private void HandleFileMetaResponse(string[] tok)
+    {
+        var target = _pendingMetaTarget;
+        _pendingMetaTarget = MetaTarget.None;
+        if (target == MetaTarget.None) return;
+
+        string phase = tok.Length >= 3 ? tok[2] : "";
+        if (phase != "E")
+        {
+            // T F X：读取失败（非 .dtshd/.cpt 或无时间码），保持“-”，不打断用户手动填写。
+            if (phase == "X") Log("读取原始元数据失败（该文件可能无时间码或格式不支持）。");
+            return;
+        }
+
+        // T F E <start> <fps> [<dialnorm>]，fps 用下划线代替空格（如 29.97_Drop）。
+        string start = tok.Length >= 4 ? tok[3] : "-";
+        string fps = tok.Length >= 5 ? tok[4].Replace('_', ' ') : "-";
+        string dial = tok.Length >= 6 ? tok[5] : "-";
+        bool hasTc = !start.Contains('-');   // 官方：起始 TC 含“-”表示无有效时间码
+
+        if (target == MetaTarget.Restripe)
+        {
+            ReOriginalStart = start;
+            ReOriginalFps = fps;
+            if (hasTc)
+            {
+                ReStart = start;
+                SetFpsIndex(fps, isMeta: false);
+            }
+        }
+        else
+        {
+            MetaOriginalStart = start;
+            MetaOriginalFps = fps;
+            MetaOriginalDialNorm = dial;
+            if (hasTc)
+            {
+                MetaStart = start;
+                SetFpsIndex(fps, isMeta: true);
+            }
+            if (dial != "-") MetaDialNorm = dial;
+        }
+    }
+
+    /// <summary>把帧率字符串匹配到下拉索引（找不到不改动）。</summary>
+    private void SetFpsIndex(string fps, bool isMeta)
+    {
+        for (int i = 0; i < FrameRateOptions.Count; i++)
+        {
+            if (string.Equals(FrameRateOptions[i], fps, StringComparison.OrdinalIgnoreCase))
+            {
+                if (isMeta) SelectedMetaFpsIndex = i; else SelectedReFpsIndex = i;
+                return;
+            }
+        }
     }
 
     // —— Append：将多个文件按各自起止时间码顺序追加合并 (T A)

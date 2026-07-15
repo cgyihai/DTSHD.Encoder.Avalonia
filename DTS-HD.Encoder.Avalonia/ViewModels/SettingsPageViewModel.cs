@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -47,8 +48,29 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     public Action? ApplyBackdropDelegate { get; set; }
 
     // ============ 静态选项目录（绑定到 ComboBox.ItemsSource）============
-    /// <summary>主题选项；下标对应 SelectedThemeIndex：0=跟随系统(Default), 1=浅色(Light), 2=深色(Dark)。</summary>
-    public IReadOnlyList<string> ThemeOptions { get; } = new[] { "跟随系统", "浅色", "深色" };
+    /// <summary>主题选项（随语言本地化）；下标对应 SelectedThemeIndex：0=跟随系统, 1=浅色, 2=深色。</summary>
+    [ObservableProperty] private IReadOnlyList<string> _themeOptions = BuildThemeOptions();
+
+    private static IReadOnlyList<string> BuildThemeOptions() => new[]
+    {
+        LocalizationManager.Get("Lang.Theme.System", "跟随系统"),
+        LocalizationManager.Get("Lang.Theme.Light", "浅色"),
+        LocalizationManager.Get("Lang.Theme.Dark", "深色"),
+    };
+
+    /// <summary>语言选项（各语言以其本身名称显示，符合语言选择器惯例）。</summary>
+    public IReadOnlyList<string> LanguageOptions { get; } =
+        LocalizationManager.Languages.Select(x => x.Display).ToList();
+
+    /// <summary>当前语言下拉索引；变更即实时切换界面语言。</summary>
+    [ObservableProperty] private int _selectedLanguageIndex;
+
+    partial void OnSelectedLanguageIndexChanged(int value)
+    {
+        if (_loading) return;
+        if (value < 0 || value >= LocalizationManager.Languages.Count) return;
+        LocalizationManager.SetLanguage(LocalizationManager.Languages[value].Code);
+    }
 
     // ============ 关于 ============
     /// <summary>应用版本号（取自程序集版本，与 csproj &lt;Version&gt; 一致，单一来源）。</summary>
@@ -63,6 +85,16 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     [ObservableProperty] private bool _updateAvailable;
     /// <summary>发现的新版本下载/发布页地址（默认指向 Releases 页）。</summary>
     private string _downloadUrl = UpdateService.ReleasesPageUrl;
+
+    /// <summary>启动时自动检查更新（绑定设置页开关）。</summary>
+    [ObservableProperty] private bool _autoCheckUpdate = AppServices.Settings.AutoCheckUpdate;
+
+    partial void OnAutoCheckUpdateChanged(bool value)
+    {
+        if (_loading) return;
+        AppServices.Settings.AutoCheckUpdate = value;
+        AppServices.SaveSettings();
+    }
 
     // ============ 可绑定属性 ============
     /// <summary>工具集目录（对应 WinUI3 ToolDirBox.Text）。</summary>
@@ -92,6 +124,16 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
         Load();
         RefreshStatus();
         _loading = false;
+        // 语言切换时实时刷新本页动态文案（主题选项 + 工具集状态文本）。
+        LocalizationManager.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged()
+    {
+        int keep = SelectedThemeIndex;
+        ThemeOptions = BuildThemeOptions();   // 重建下拉项（重新赋 ItemsSource 可能重置选中项）
+        SelectedThemeIndex = keep;            // 复原选中项
+        RefreshStatus();                      // 重新本地化状态文本
     }
 
     // =========================================================
@@ -105,6 +147,10 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
         ToolDir = s.ToolDir;
         MicaEnabled = s.MicaEnabled;
         SelectedThemeIndex = s.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
+        // 当前语言下拉初值（与已应用的界面语言一致；构造期 _loading=true 不会触发切换）
+        var cur = LocalizationManager.Current;
+        for (int i = 0; i < LocalizationManager.Languages.Count; i++)
+            if (LocalizationManager.Languages[i].Code == cur) { SelectedLanguageIndex = i; break; }
     }
 
     /// <summary>
@@ -128,8 +174,8 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
 
         bool ready = s.ToolsetReady;
         ToolsetReady = ready;
-        StatusText = ready ? "工具集就绪 · DtsJobQueue 与 DTSEncConfig 已找到"
-                           : "工具集不完整 · 请确认 DTS-HD_Tool 目录";
+        StatusText = ready ? LocalizationManager.Get("Lang.Set.ToolReady", "工具集就绪 · DtsJobQueue 与 DTSEncConfig 已找到")
+                           : LocalizationManager.Get("Lang.Set.ToolIncomplete", "工具集不完整 · 请确认 DTS-HD_Tool 目录");
     }
 
     // =========================================================

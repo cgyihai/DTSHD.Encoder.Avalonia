@@ -18,8 +18,8 @@
             <!-- ========== 标题栏 ========== -->
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Grid.Column="0" Spacing="2">
-                    <TextBlock Text="音频编码" FontSize="28" FontWeight="SemiBold"/>
-                    <TextBlock Text="选择输入，设置参数，写出 .cfg 并提交 DtsJobQueue 引擎编码。" Opacity="0.7"/>
+                    <TextBlock Text="{DynamicResource Lang.Encode.Title}" FontSize="28" FontWeight="SemiBold"/>
+                    <TextBlock Text="{DynamicResource Lang.Encode.Subtitle}" Opacity="0.7"/>
                     <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0" VerticalAlignment="Center">
                         <!-- 已连接：勾图标（绿色） -->
                         <TextBlock Text="✓" FontSize="16" FontWeight="Bold" Foreground="SeaGreen"
@@ -39,10 +39,10 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
                     <!-- 改用普通 Button：HyperlinkButton 默认带下划线且字体发虚，
                          Button 视觉清晰，与 FluentUI 按钮风格一致 -->
-                    <Button Content="恢复默认" Command="{Binding ResetDefaultsCommand}"/>
-                    <Button Content="加载设置" Command="{Binding LoadSettingsCommand}"/>
-                    <Button Content="保存设置" Command="{Binding SaveSettingsCommand}"/>
-                    <Button Content="设置另存为" Command="{Binding SaveSettingsAsCommand}"/>
+                    <Button Content="{DynamicResource Lang.Encode.ResetDefaults}" Command="{Binding ResetDefaultsCommand}"/>
+                    <Button Content="{DynamicResource Lang.Encode.LoadSettings}" Command="{Binding LoadSettingsCommand}"/>
+                    <Button Content="{DynamicResource Lang.Encode.SaveSettings}" Command="{Binding SaveSettingsCommand}"/>
+                    <Button Content="{DynamicResource Lang.Encode.SaveSettingsAs}" Command="{Binding SaveSettingsAsCommand}"/>
                 </StackPanel>
             </Grid>
 
@@ -64,24 +64,24 @@
                     <StackPanel Spacing="12">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
                             <StackPanel Grid.Column="0" Spacing="12">
-                                <TextBlock Text="输入 / 输出" FontWeight="SemiBold" FontSize="16"/>
-                                <TextBlock Text="可将音频文件拖入此处导入。分轨模式下拖入任一声道（名_L/名-L/名.L…）会自动识别同目录同名其它声道。" Opacity="0.7" TextWrapping="Wrap"/>
+                                <TextBlock Text="{DynamicResource Lang.Encode.SectionInputOutput}" FontWeight="SemiBold" FontSize="16"/>
+                                <TextBlock Text="{DynamicResource Lang.T0}" Opacity="0.7" TextWrapping="Wrap"/>
                                 <WrapPanel Orientation="Horizontal" ItemSpacing="12" LineSpacing="8">
-                                    <RadioButton Content="单文件输入" GroupName="inputmode" IsChecked="{Binding IsSingleFileMode, Mode=TwoWay}"/>
-                                    <RadioButton Content="分轨输入（各声道独立文件）" GroupName="inputmode" IsChecked="{Binding !IsSingleFileMode}"/>
+                                    <RadioButton Content="{DynamicResource Lang.T1}" GroupName="inputmode" IsChecked="{Binding IsSingleFileMode, Mode=TwoWay}"/>
+                                    <RadioButton Content="{DynamicResource Lang.T2}" GroupName="inputmode" IsChecked="{Binding !IsSingleFileMode}"/>
                                 </WrapPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                                    <TextBlock Text="声道布局:" VerticalAlignment="Center" Width="80"/>
+                                    <TextBlock Text="{DynamicResource Lang.T3}" VerticalAlignment="Center" Width="80"/>
                                     <!-- 弹性宽度：删除 MinWidth=360，让 ComboBox 占满左栏剩余空间。
                                          窄窗口时下拉框宽度自适应收缩，配合外层 ScrollViewer 兜底滚动。 -->
                                     <ComboBox HorizontalAlignment="Stretch"
                                               ItemsSource="{Binding ChannelLayoutDisplays}"
                                               SelectedItem="{Binding SelectedChannelLayoutDisplay, Mode=TwoWay}"/>
-                                    <Button Content="全部清除" Command="{Binding ClearAllCommand}"/>
+                                    <Button Content="{DynamicResource Lang.T4}" Command="{Binding ClearAllCommand}"/>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Top">
-                                <TextBlock Text="布局图示" FontSize="12" Opacity="0.7" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Lang.T5}" FontSize="12" Opacity="0.7" HorizontalAlignment="Center"/>
                                 <ctl:SpeakerLayout x:Name="SpeakerHost"/>
                             </StackPanel>
                         </Grid>
@@ -90,48 +90,49 @@
                         <Grid ColumnDefinitions="40,*,48,52,72,100,72" ColumnSpacing="6"
                               IsVisible="{Binding IsSingleFilePanelVisible}" Margin="0,4,0,4">
                             <TextBlock Grid.Column="0" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="文件" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="声道" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="位宽" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Text="采样率" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="5" Text="时长" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource Lang.T6}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T7}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{DynamicResource Lang.T8}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="{DynamicResource Lang.T9}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="{DynamicResource Lang.T10}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="6" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
 
                         <!-- 单文件输入行：信息框（声道/位宽/采样率/时长）放在输入框右侧、浏览按钮左侧。
                              列宽与分轨行一致（40,*,48,52,72,100,72），时长列 100px 与分轨时长框完全对齐。 -->
                         <Grid ColumnDefinitions="40,*,48,52,72,100,72" ColumnSpacing="6" IsVisible="{Binding IsSingleFilePanelVisible}">
-                            <TextBlock Grid.Column="0" Text="" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Watermark="多声道 .wav (RIFF WAV, 最高 7.1)" Text="{Binding SingleFilePath, Mode=TwoWay}"/>
+                            <!-- “输入”标签：与下方“输出”标签同列宽(40px)、同样式，左对齐一致 -->
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T11}" Text="{Binding SingleFilePath, Mode=TwoWay}"/>
                             <Border Grid.Column="2" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                     Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                    ToolTip.Tip="声道数（从 WAV 头读取）">
+                                    ToolTip.Tip="{DynamicResource Lang.T12}">
                                 <TextBlock Text="{Binding SingleChannelInfo}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <Border Grid.Column="3" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                     Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                    ToolTip.Tip="位宽（从 WAV 头读取）">
+                                    ToolTip.Tip="{DynamicResource Lang.T13}">
                                 <TextBlock Text="{Binding SingleBitWidthInfo}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <Border Grid.Column="4" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                     Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                    ToolTip.Tip="采样率（从 WAV 头读取）">
+                                    ToolTip.Tip="{DynamicResource Lang.T14}">
                                 <TextBlock Text="{Binding SingleSampleRateInfo}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <Border Grid.Column="5" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                     Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                    ToolTip.Tip="时长（从 WAV 头读取）">
+                                    ToolTip.Tip="{DynamicResource Lang.T15}">
                                 <TextBlock Text="{Binding SingleDurationInfo}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <Button Grid.Column="6" Content="浏览…" Command="{Binding BrowseSingleCommand}" HorizontalAlignment="Stretch"/>
+                            <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSingleCommand}" HorizontalAlignment="Stretch"/>
                         </Grid>
 
                         <!-- 分轨声道输入行表头（列宽与下方 DataTemplate 行一致：32,*,48,52,72,100,72）
@@ -139,11 +140,11 @@
                         <Grid ColumnDefinitions="32,*,48,52,72,100,72" ColumnSpacing="6"
                               IsVisible="{Binding IsChannelRowsVisible}" Margin="0,4,0,4">
                             <TextBlock Grid.Column="0" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="文件" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="声道" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Text="位宽" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Text="采样率" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="5" Text="时长" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource Lang.T6}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T7}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{DynamicResource Lang.T8}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" Text="{DynamicResource Lang.T9}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" Text="{DynamicResource Lang.T10}" Opacity="0.7" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="6" Text="" Opacity="0.7" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </Grid>
 
@@ -158,7 +159,7 @@
                                 <DataTemplate x:DataType="vm:ChannelRowViewModel">
                                     <Grid ColumnDefinitions="32,*,48,52,72,100,72" ColumnSpacing="6">
                                         <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center"/>
-                                        <TextBox Grid.Column="1" Watermark="声道文件" Text="{Binding FilePath, Mode=TwoWay}"/>
+                                        <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T17}" Text="{Binding FilePath, Mode=TwoWay}"/>
                                         <!-- 声道/位宽/采样率/时长：圆角矩形框（移植自 WinUI3 ValueBox 样式）。
                                              用主题资源 ControlFillColorDefaultBrush + ControlStrokeColorDefaultBrush，
                                              浅色/深色主题自动切换。 -->
@@ -186,7 +187,7 @@
                                                 Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Duration}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <Button Grid.Column="6" Content="浏览…" Command="{Binding BrowseCommand}" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" HorizontalAlignment="Stretch"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -194,9 +195,9 @@
 
                         <!-- 输出行 -->
                         <Grid ColumnDefinitions="40,*,84" ColumnSpacing="8" Margin="0,8,0,0">
-                            <TextBlock Grid.Column="0" Text="输出" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Watermark="D:\out\title.dtshd" Text="{Binding OutputPath, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseOutputCommand}" HorizontalAlignment="Stretch"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseOutputCommand}" HorizontalAlignment="Stretch"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -207,47 +208,47 @@
                     <!-- 右栏上：编码设置 -->
                     <Border Classes="card">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="编码设置" FontWeight="SemiBold" FontSize="16"/>
+                            <TextBlock Text="{DynamicResource Lang.Encode.SectionEncodeSettings}" FontWeight="SemiBold" FontSize="16"/>
                             <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
-                                    <TextBlock Text="目标格式" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T19}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding DestFormats}"
                                               SelectedIndex="{Binding SelectedDestFormatIndex, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="流类型" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T20}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding StreamTypes}"
                                               SelectedIndex="{Binding SelectedStreamTypeIndex, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4">
-                                    <TextBlock Text="编码类型" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T21}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding EncodeTypeOptions}"
                                               SelectedItem="{Binding SelectedEncodeType, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
-                                    <TextBlock Text="采样率 (Hz)" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T22}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding SampleRateOptions}"
                                               SelectedItem="{Binding SelectedSampleRate, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="位宽" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T8}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding BitWidthOptions}"
                                               SelectedItem="{Binding SelectedBitWidth, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4">
-                                    <TextBlock Text="核心码率 (kbps)" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T23}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding CoreBitRateOptions}"
                                               SelectedItem="{Binding CoreBitRateText, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                             </Grid>
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock Text="对白归一化:" VerticalAlignment="Center"/>
+                                <TextBlock Text="{DynamicResource Lang.T24}" VerticalAlignment="Center"/>
                                 <ComboBox MinWidth="170"
                                           ItemsSource="{Binding DialogNormOptions}"
                                           SelectedIndex="{Binding SelectedDialogNormIndex, Mode=TwoWay}"/>
@@ -264,36 +265,36 @@
                     <!-- 右栏下：时间码设置 -->
                     <Border Classes="card">
                         <StackPanel Spacing="10">
-                            <TextBlock Text="时间码设置 (Timecode)" FontWeight="SemiBold" FontSize="16"/>
+                            <TextBlock Text="{DynamicResource Lang.Encode.SectionTimecode}" FontWeight="SemiBold" FontSize="16"/>
                             <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
-                                    <TextBlock Text="TC 帧率" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T25}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding FrameRateOptions}"
                                               SelectedItem="{Binding SelectedFrameRate, Mode=TwoWay}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="开始时间" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T26}" Opacity="0.7" FontSize="12"/>
                                     <TextBox Text="{Binding StartTime, Mode=TwoWay}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4">
-                                    <TextBlock Text="结束时间" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T27}" Opacity="0.7" FontSize="12"/>
                                     <TextBox Text="{Binding EndTime, Mode=TwoWay}"/>
                                 </StackPanel>
-                                <CheckBox Grid.Row="1" Grid.Column="0" Content="编码整个文件"
+                                <CheckBox Grid.Row="1" Grid.Column="0" Content="{DynamicResource Lang.T28}"
                                           IsChecked="{Binding EncodeEntireFile, Mode=TwoWay}" VerticalAlignment="Bottom"/>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="编码自" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T29}" Opacity="0.7" FontSize="12"/>
                                     <TextBox Text="{Binding EncodeFromTime, Mode=TwoWay}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4">
-                                    <TextBlock Text="编码至" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T30}" Opacity="0.7" FontSize="12"/>
                                     <TextBox Text="{Binding EncodeToTime, Mode=TwoWay}"/>
                                 </StackPanel>
-                                <CheckBox Grid.Row="2" Grid.Column="0" Content="启用参考 TC"
+                                <CheckBox Grid.Row="2" Grid.Column="0" Content="{DynamicResource Lang.T31}"
                                           IsChecked="{Binding UseReferenceTime, Mode=TwoWay}" VerticalAlignment="Center"/>
                                 <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="参考 TC" Opacity="0.7" FontSize="12"/>
+                                    <TextBlock Text="{DynamicResource Lang.T32}" Opacity="0.7" FontSize="12"/>
                                     <TextBox Text="{Binding ReferenceTime, Mode=TwoWay}"/>
                                 </StackPanel>
                             </Grid>
@@ -308,7 +309,7 @@
                  按 Java GUI 行为：内层各项默认勾选状态决定是否写入 .cfg。 -->
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <Expander.Header>
-                    <TextBlock Text="比特流 (Bitstream / 元数据)" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Lang.Encode.SectionBitstream}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
                 </Expander.Header>
                 <StackPanel Spacing="12" Margin="0,8,0,0">
                     <!-- 主音频衰减 + 单声道映射：横向滚动兜底（窄窗口溢出时用） -->
@@ -316,8 +317,8 @@
                         <StackPanel Orientation="Horizontal" Spacing="24">
                             <!-- 主音频衰减 -->
                             <StackPanel Spacing="6">
-                                <TextBlock Text="主音频衰减 (Static)" FontWeight="SemiBold"/>
-                                <CheckBox Content="启用主音频衰减" IsChecked="{Binding UsePrimaryAudioAttenuation, Mode=TwoWay}"/>
+                                <TextBlock Text="{DynamicResource Lang.T33}" FontWeight="SemiBold"/>
+                                <CheckBox Content="{DynamicResource Lang.T34}" IsChecked="{Binding UsePrimaryAudioAttenuation, Mode=TwoWay}"/>
                                 <StackPanel Orientation="Horizontal" Spacing="10">
                                     <ctl:DbFader Caption="Primary" Minimum="-60" Maximum="40" DbValue="{Binding PrimaryDb, Mode=TwoWay}"/>
                                     <StackPanel Spacing="6" VerticalAlignment="Center">
@@ -338,7 +339,7 @@
                             </StackPanel>
                             <!-- 单声道次音频声道映射 -->
                             <StackPanel Spacing="6">
-                                <TextBlock Text="单声道次音频 - 声道输出映射" FontWeight="SemiBold"/>
+                                <TextBlock Text="{DynamicResource Lang.T35}" FontWeight="SemiBold"/>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <ctl:DbFader Caption="L" DbValue="{Binding MonoLDb, Mode=TwoWay}"/>
                                     <ctl:DbFader Caption="R" DbValue="{Binding MonoRDb, Mode=TwoWay}"/>
@@ -354,16 +355,16 @@
                     <StackPanel Spacing="8">
                         <!-- 第 1 行：启用 AAF + 衰减方式单选（横排） -->
                         <StackPanel Orientation="Horizontal" Spacing="16">
-                            <CheckBox Content="嵌入 AAF 元数据" IsChecked="{Binding EmbedAaf, Mode=TwoWay}" VerticalAlignment="Center"/>
-                            <TextBlock Text="衰减方式:" VerticalAlignment="Center" Opacity="0.7"/>
+                            <CheckBox Content="{DynamicResource Lang.T36}" IsChecked="{Binding EmbedAaf, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Lang.T37}" VerticalAlignment="Center" Opacity="0.7"/>
                             <RadioButton Content="Unison" GroupName="aafatt" IsChecked="{Binding !IsAafIndependent}" VerticalAlignment="Center"/>
                             <RadioButton Content="Independent" GroupName="aafatt" IsChecked="{Binding IsAafIndependent, Mode=TwoWay}" VerticalAlignment="Center"/>
                         </StackPanel>
                         <!-- 第 2 行：AAF 文件路径 + 浏览（限制 TextBox MaxWidth 避免过宽） -->
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                            <TextBlock Grid.Column="0" Text="AAF 文件:" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T38}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding AafFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseAafCommand}"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseAafCommand}"/>
                         </Grid>
                         <!-- 第 3 行：7 个衰减值横排一行（Unison + 6 声道），不再竖排
                              每项 = 标签(40px) + 输入框(56px) + Spacing(10) ≈ 106px × 7 = ~740px -->
@@ -378,7 +379,7 @@
                         </StackPanel>
                         <!-- 第 4 行：声像开关 + 5 个声像值横排一行 -->
                         <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="6">
-                            <CheckBox Content="声像 (Panning)" IsChecked="{Binding AafPanningEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <CheckBox Content="{DynamicResource Lang.T39}" IsChecked="{Binding AafPanningEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanLF, Mode=TwoWay}"/></StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanRF, Mode=TwoWay}"/></StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="C" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanC, Mode=TwoWay}"/></StackPanel>
@@ -389,25 +390,25 @@
 
                     <!-- 单一剪辑 + CSV 分支点 + CSV 文件路径：全部横排一行 -->
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <CheckBox Content="单一剪辑 (Single Clip)" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}" VerticalAlignment="Center"/>
-                        <CheckBox Content="使用 CSV 分支点" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T40}" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T41}" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}" VerticalAlignment="Center"/>
                     </StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                        <TextBlock Grid.Column="0" Text="CSV 文件:" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T42}" VerticalAlignment="Center"/>
                         <TextBox Grid.Column="1" Text="{Binding CsvFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
-                        <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCsvCommand}"/>
+                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCsvCommand}"/>
                     </Grid>
 
                     <!-- Express + 7.1 Wide：横排一行 -->
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <CheckBox Content="Express 对话模式" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}" VerticalAlignment="Center"/>
-                        <CheckBox Content="7.1 Wide 重映射" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T43}" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T44}" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <!-- 程序信息 -->
                     <StackPanel Spacing="4">
-                        <TextBlock Text="程序信息 (Program Info)" Opacity="0.7" FontSize="12"/>
-                        <TextBox Watermark="可选" AcceptsReturn="True" Height="70" TextWrapping="Wrap"
+                        <TextBlock Text="{DynamicResource Lang.T45}" Opacity="0.7" FontSize="12"/>
+                        <TextBox Watermark="{DynamicResource Lang.T46}" AcceptsReturn="True" Height="70" TextWrapping="Wrap"
                                  Text="{Binding ProgramInfo, Mode=TwoWay}"/>
                     </StackPanel>
                 </StackPanel>
@@ -418,16 +419,16 @@
                  按 Java GUI 行为：6.x/7.x 布局强制启用 5.1 下混矩阵，5.1 及以下默认关闭。 -->
             <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <Expander.Header>
-                    <TextBlock Text="下混 (Downmix)" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Lang.Encode.SectionDownmix}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
                 </Expander.Header>
                 <StackPanel Spacing="14" Margin="0,8,0,0">
                     <!-- 下混到 5.1 -->
                     <StackPanel Spacing="8">
                         <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
-                            <TextBlock Text="下混到 5.1 (6.1/7.1 → 5.1)" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <CheckBox Content="启用" IsChecked="{Binding Use51Downmix, Mode=TwoWay}"/>
-                            <CheckBox Content="保留当前声道(primary)" IsChecked="{Binding UseCurrentChannels, Mode=TwoWay}"/>
-                            <CheckBox Content="使用 Legacy Matrix" IsChecked="{Binding UseLegacyMatrix, Mode=TwoWay}"/>
+                            <TextBlock Text="{DynamicResource Lang.T47}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use51Downmix, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T49}" IsChecked="{Binding UseCurrentChannels, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T50}" IsChecked="{Binding UseLegacyMatrix, Mode=TwoWay}"/>
                         </WrapPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="0,0,0,16">
                             <StackPanel Orientation="Horizontal" Spacing="14">
@@ -490,12 +491,12 @@
                     <!-- 下混到 2.0 -->
                     <StackPanel Spacing="8">
                         <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
-                            <TextBlock Text="下混到 2.0" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <CheckBox Content="启用" IsChecked="{Binding Use20Downmix, Mode=TwoWay}"/>
+                            <TextBlock Text="{DynamicResource Lang.T51}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use20Downmix, Mode=TwoWay}"/>
                             <RadioButton Content="Lo/Ro" GroupName="dmx20mode" IsChecked="{Binding !Is2ChDmixLtRt}"/>
                             <RadioButton Content="Lt/Rt" GroupName="dmx20mode" IsChecked="{Binding Is2ChDmixLtRt, Mode=TwoWay}"/>
-                            <CheckBox Content="饱和检测" IsChecked="{Binding DownmixSaturationCheck, Mode=TwoWay}"/>
-                            <CheckBox Content="嵌入下混" IsChecked="{Binding IsEmbeddedDownmix, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T52}" IsChecked="{Binding DownmixSaturationCheck, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T53}" IsChecked="{Binding IsEmbeddedDownmix, Mode=TwoWay}"/>
                         </WrapPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="0,0,0,16">
                             <StackPanel Orientation="Horizontal" Spacing="18">
@@ -561,16 +562,16 @@
                          WrapPanel：窄窗口下按钮自动换行，避免挤压重叠。 -->
                     <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="8">
                         <!-- 开始编码：蓝色背景（固定蓝色，hover/pressed 不丢失背景色，仅做亮度反馈） -->
-                        <Button Content="开始编码" Classes="encode-start" Command="{Binding EncodeCommand}"/>
+                        <Button Content="{DynamicResource Lang.Encode.Start}" Classes="encode-start" Command="{Binding EncodeCommand}"/>
                         <!-- 终止编码：红色背景（固定红色，hover/pressed 不丢失背景色，仅做亮度反馈） -->
-                        <Button Content="终止编码" Classes="encode-stop" Command="{Binding AbortCommand}"/>
+                        <Button Content="{DynamicResource Lang.Encode.Stop}" Classes="encode-stop" Command="{Binding AbortCommand}"/>
                         <!-- 打开编码队列弹窗 -->
-                        <Button Content="打开编码队列" Click="OnOpenQueueClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.OpenQueue}" Click="OnOpenQueueClick"/>
                         <!-- 预览按钮组：左侧加 margin 视觉分隔，点击触发 TextPreviewWindow 弹窗 -->
-                        <Button Content="预览 .cfg" Click="OnPreviewCfgClick" Margin="16,0,0,0"/>
-                        <Button Content="预览命令" Click="OnPreviewCommandClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.PreviewCfg}" Click="OnPreviewCfgClick" Margin="16,0,0,0"/>
+                        <Button Content="{DynamicResource Lang.Encode.PreviewCmd}" Click="OnPreviewCommandClick"/>
                         <!-- 查看日志：点击触发弹窗，避免占用主界面空间 -->
-                        <Button Content="查看日志" Click="OnShowLogClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.ViewLog}" Click="OnShowLogClick"/>
                     </WrapPanel>
 
                     <!-- 总进度条 -->

@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using AvaloniaFluentUI.Controls;
 using AvaloniaFluentUI.Styling;
 using AvaloniaFluentUI.Windowing;
 using DTSHD.Encoder.Avalonia.Services;
@@ -37,6 +38,37 @@ public partial class MainWindow : AppWindow
         // 任何机器渲染一致，无需再按 OS 版本动态设置字体/glyph。
         // 首次加载完成后根据屏幕工作区动态适配窗口尺寸（支持低分辨率）
         ResizeToIdeal();
+        // 启动时后台检查更新（仅在开启且发现新版时弹提示，不打扰）
+        CheckUpdatesOnStartupAsync();
+    }
+
+    /// <summary>启动时静默检查 GitHub 新版本；仅当确有更新时才弹一次提示对话框。
+    /// 全程吞异常、非阻塞，网络不可用/无更新时用户完全无感。</summary>
+    private async void CheckUpdatesOnStartupAsync()
+    {
+        try
+        {
+            if (!AppServices.Settings.AutoCheckUpdate) return;
+            var info = await UpdateService.CheckLatestAsync();
+            if (info == null || !info.IsNewer) return;
+
+            var dlg = new ContentDialog
+            {
+                Title = LocalizationManager.Get("Lang.Update.FoundTitle", "发现新版本"),
+                Content = string.Format(
+                    LocalizationManager.Get("Lang.Update.FoundBody", "发现新版本 {0}（当前 {1}）。是否前往下载？"),
+                    info.LatestVersion, info.CurrentVersion),
+                PrimaryButtonText = LocalizationManager.Get("Lang.Settings.OpenDownload", "前往下载"),
+                CloseButtonText = LocalizationManager.Get("Lang.Update.Later", "稍后"),
+            };
+            var result = await dlg.ShowAsync(this);
+            if (result == ContentDialogResult.Primary)
+            {
+                try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(info.DownloadUrl) { UseShellExecute = true }); }
+                catch { }
+            }
+        }
+        catch { /* 更新检查绝不影响主程序 */ }
     }
 
     // ---------- 窗口尺寸自适应 ----------

@@ -22,8 +22,8 @@
 
         <!-- ========== 标题栏 ========== -->
         <StackPanel Grid.Row="0" Spacing="2">
-            <TextBlock Text="DTS-HD StreamTools" FontSize="28" FontWeight="SemiBold"/>
-            <TextBlock Text="对已编码的 .dtshd/.cpt 码流做信息/校验/拆分/合并/裁剪/加静音/重打时间码/元数据等处理（原生 DTSToolFramewrk 引擎，模块 T）。" Opacity="0.7" TextWrapping="Wrap"/>
+            <TextBlock Text="{DynamicResource Lang.Stream.Title}" FontSize="28" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Lang.Stream.Subtitle}" Opacity="0.7" TextWrapping="Wrap"/>
             <!-- 引擎状态：三态图标（✓ 绿 / ProgressRing 黄 / ✗ 红）+ 文字 -->
             <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0" VerticalAlignment="Center">
                 <!-- 已连接：勾图标（绿色） -->
@@ -46,205 +46,223 @@
         <TabControl Grid.Row="1" Padding="0">
 
             <!-- 1. 信息 -->
-            <TabItem Header="信息">
+            <TabItem Header="{DynamicResource Lang.T54}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="读取码流信息 (InfoDumper / T I)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T55}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                            <TextBox Grid.Column="0" PlaceholderText="选择 .dtshd / .cpt" Text="{Binding InfoFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="InfoFile" Margin="0,0,8,0"/>
-                            <Button Grid.Column="2" Content="读取信息" Classes="accent" Command="{Binding InfoCommand}"/>
+                            <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T56}" Text="{Binding InfoFile, Mode=TwoWay}"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="InfoFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.T57}" Classes="accent" Command="{Binding InfoCommand}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 2. 校验 -->
-            <TabItem Header="校验">
+            <TabItem Header="{DynamicResource Lang.T58}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="校验码流 (DTSHDVerify.exe)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T59}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                            <TextBox Grid.Column="0" PlaceholderText="选择 .dtshd / .cpt" Text="{Binding VerifyFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="VerifyFile" Margin="0,0,8,0"/>
-                            <Button Grid.Column="2" Content="校验" Classes="accent" Command="{Binding VerifyCommand}"/>
+                            <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T56}" Text="{Binding VerifyFile, Mode=TwoWay}"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="VerifyFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.T58}" Classes="accent" Command="{Binding VerifyCommand}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 3. 拆分 -->
-            <TabItem Header="拆分">
+            <TabItem Header="{DynamicResource Lang.T60}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="按时间码拆分为两个文件 (T S)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T61}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输入" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText=".dtshd" Text="{Binding SplitIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="SplitIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="SplitIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,160" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="拆分时间码" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T63}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding SplitTc, Mode=TwoWay}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出 1" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T64}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="part1.dtshd" Text="{Binding SplitOut1, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut1"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut1"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出 2" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T65}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="part2.dtshd" Text="{Binding SplitOut2, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut2"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut2"/>
                         </Grid>
-                        <Button Content="拆分" Classes="accent" Command="{Binding SplitCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T60}" Classes="accent" Command="{Binding SplitCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 4. 合并 -->
-            <TabItem Header="合并">
+            <TabItem Header="{DynamicResource Lang.T66}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="合并两个码流 (T J)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T67}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="文件 1" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T68}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding JoinF1, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="JoinF1"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="JoinF1"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="文件 2" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T69}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding JoinF2, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="JoinF2"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="JoinF2"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="joined.dtshd" Text="{Binding JoinOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="JoinOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="JoinOut"/>
                         </Grid>
-                        <Button Content="合并" Classes="accent" Command="{Binding JoinCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T66}" Classes="accent" Command="{Binding JoinCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 5. 裁剪 -->
-            <TabItem Header="裁剪">
+            <TabItem Header="{DynamicResource Lang.T70}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="按起止时间码裁剪 (T T)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T71}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输入" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding TrimIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="TrimIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="TrimIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150,Auto,150" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="开始" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T72}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding TrimStart, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="2" Text="结束" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T73}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="3" Text="{Binding TrimEnd, Mode=TwoWay}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="trimmed.dtshd" Text="{Binding TrimOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="TrimOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="TrimOut"/>
                         </Grid>
-                        <Button Content="裁剪" Classes="accent" Command="{Binding TrimCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T70}" Classes="accent" Command="{Binding TrimCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 6. 加静音 -->
-            <TabItem Header="加静音">
+            <TabItem Header="{DynamicResource Lang.T74}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="在头/尾添加静音并重设起始时间码 (T N)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T75}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输入" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding SilIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="SilIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="SilIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150,Auto,150" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="头部静音" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T76}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding SilHead, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="2" Text="尾部静音" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T77}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="3" Text="{Binding SilTail, Mode=TwoWay}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="新起始TC" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding SilNewTc, Mode=TwoWay}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="with_silence.dtshd" Text="{Binding SilOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="SilOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SilOut"/>
                         </Grid>
-                        <Button Content="加静音" Classes="accent" Command="{Binding AddSilenceCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T74}" Classes="accent" Command="{Binding AddSilenceCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 7. 重打时间码 -->
-            <TabItem Header="重打时间码">
+            <TabItem Header="{DynamicResource Lang.T79}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="按新帧率/起始时间码重打 (T R)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T80}" FontWeight="SemiBold" TextWrapping="Wrap"/>
                         <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="文件" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T6}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding ReFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="ReFile"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="ReFile"/>
                         </Grid>
+                        <!-- 原始值（只读，自动读取）：对应官方 Restripe 面板的 Original Start Time / Original Frame Rate -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{DynamicResource Lang.T81}" FontSize="12" Opacity="0.7" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Lang.T82}" FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReOriginalStart}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Lang.T83}" FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReOriginalFps}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <Grid ColumnDefinitions="90,150,Auto,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="新起始TC" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding ReStart, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="2" Text="新帧率" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T84}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="3" Width="130"
                                       ItemsSource="{Binding FrameRateOptions}"
                                       SelectedIndex="{Binding SelectedReFpsIndex, Mode=TwoWay}"/>
                         </Grid>
-                        <Button Content="重打时间码" Classes="accent" Command="{Binding RestripeCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T79}" Classes="accent" Command="{Binding RestripeCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 8. 元数据 -->
-            <TabItem Header="元数据">
+            <TabItem Header="{DynamicResource Lang.T85}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="修改对话归一化 / 帧率 / 起始时间码 (T M)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T86}" FontWeight="SemiBold" TextWrapping="Wrap"/>
                         <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="文件" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T6}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding MetaFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="MetaFile"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="MetaFile"/>
                         </Grid>
+                        <!-- 原始值（只读，自动读取）：对应官方 Metadata 面板的 Original Start / Frame Rate / Dial Norm -->
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{DynamicResource Lang.T81}" FontSize="12" Opacity="0.7" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Lang.T82}" FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding MetaOriginalStart}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Lang.T83}" FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding MetaOriginalFps}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="· DialNorm" FontSize="12" Opacity="0.5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding MetaOriginalDialNorm}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <Grid ColumnDefinitions="90,150,Auto,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="新起始TC" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding MetaStart, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="2" Text="新帧率" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T84}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="3" Width="130"
                                       ItemsSource="{Binding FrameRateOptions}"
                                       SelectedIndex="{Binding SelectedMetaFpsIndex, Mode=TwoWay}"/>
                         </Grid>
                         <Grid ColumnDefinitions="90,150,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="对话归一化" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T87}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding MetaDialNorm, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="2" Text="dBFS" VerticalAlignment="Center" Opacity="0.6"/>
                         </Grid>
-                        <Button Content="写入元数据" Classes="accent" Command="{Binding MetadataCommand}" HorizontalAlignment="Left"/>
+                        <Button Content="{DynamicResource Lang.T88}" Classes="accent" Command="{Binding MetadataCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 9. 追加合并（多文件行 ItemsControl，行模板绑定 AppendRowViewModel） -->
-            <TabItem Header="追加合并">
+            <TabItem Header="{DynamicResource Lang.T89}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="将多个文件按各自起止时间码顺序追加合并 (T A)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T90}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
-                            <TextBlock Grid.Column="0" Text="输出" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="appended.dtshd" Text="{Binding AppendOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="浏览…" Command="{Binding BrowseSaveCommand}" CommandParameter="AppendOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="AppendOut"/>
                         </Grid>
-                        <TextBlock Text="输入文件（按合并顺序，含各自起止时间码）" Opacity="0.7"/>
+                        <TextBlock Text="{DynamicResource Lang.T91}" Opacity="0.7"/>
                         <ItemsControl ItemsSource="{Binding AppendRows}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -255,7 +273,7 @@
                                 <DataTemplate x:DataType="vm:AppendRowViewModel">
                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
                                         <TextBox Grid.Column="0" PlaceholderText=".dtshd" Text="{Binding FilePath, Mode=TwoWay}"/>
-                                        <Button Grid.Column="1" Content="浏览…" Command="{Binding BrowseCommand}"/>
+                                        <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}"/>
                                         <TextBox Grid.Column="2" Width="120" Text="{Binding Start, Mode=TwoWay}"/>
                                         <TextBox Grid.Column="3" Width="120" Text="{Binding End, Mode=TwoWay}"/>
                                         <Button Grid.Column="4" Content="✕" Command="{Binding RemoveCommand}"/>
@@ -264,41 +282,41 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Content="＋ 添加文件行" Command="{Binding AddAppendRowCommand}"/>
-                            <Button Content="追加合并" Classes="accent" Command="{Binding AppendCommand}"/>
+                            <Button Content="{DynamicResource Lang.T92}" Command="{Binding AddAppendRowCommand}"/>
+                            <Button Content="{DynamicResource Lang.T89}" Classes="accent" Command="{Binding AppendCommand}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 10. PBR 分析（Canvas 在 code-behind 按 PbrPoints 绘制折线图） -->
-            <TabItem Header="PBR 分析">
+            <TabItem Header="{DynamicResource Lang.T93}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="峰值比特率分析：生成 .dtspbr 并绘制曲线 (T P)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T94}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                            <TextBox Grid.Column="0" PlaceholderText="选择 .dtshd" Text="{Binding PbrFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="浏览…" Command="{Binding BrowseCommand}" CommandParameter="PbrFile" Margin="0,0,8,0"/>
-                            <Button Grid.Column="2" Content="分析" Classes="accent" Command="{Binding PbrCommand}"/>
+                            <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T95}" Text="{Binding PbrFile, Mode=TwoWay}"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="PbrFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.T96}" Classes="accent" Command="{Binding PbrCommand}"/>
                         </Grid>
                         <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="6"
                                 Height="280" Background="{DynamicResource LayerFillBrush}">
                             <Canvas x:Name="PbrCanvas" Background="Transparent" SizeChanged="OnPbrCanvasSizeChanged"/>
                         </Border>
-                        <TextBlock Opacity="0.7" Text="Peak Bit Rate Schedule — 时间码 vs kbps"/>
+                        <TextBlock Opacity="0.7" Text="{DynamicResource Lang.T97}"/>
                     </StackPanel>
                 </Border>
             </TabItem>
 
             <!-- 11. 原始命令 -->
-            <TabItem Header="原始命令">
+            <TabItem Header="{DynamicResource Lang.T98}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
-                        <TextBlock Text="高级：直接发送 T 命令（用于尚未做成界面的操作）" FontWeight="SemiBold"/>
+                        <TextBlock Text="{DynamicResource Lang.T99}" FontWeight="SemiBold"/>
                         <TextBox PlaceholderText='例如: T I "D:\out\title.dtshd"' Text="{Binding RawCmd, Mode=TwoWay}"/>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Content="发送" Command="{Binding RawSendCommand}"/>
-                            <Button Content="取消操作 (T Z)" Command="{Binding CancelOpCommand}"/>
+                            <Button Content="{DynamicResource Lang.T100}" Command="{Binding RawSendCommand}"/>
+                            <Button Content="{DynamicResource Lang.T101}" Command="{Binding CancelOpCommand}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -310,7 +328,7 @@
         <Border Grid.Row="2" Classes="card" Padding="16">
             <StackPanel Spacing="4">
                 <Grid>
-                    <TextBlock Text="工具响应 / 日志" FontWeight="SemiBold"/>
+                    <TextBlock Text="{DynamicResource Lang.T102}" FontWeight="SemiBold"/>
                     <TextBlock Text="{Binding OpStatus}" Opacity="0.75" HorizontalAlignment="Right"/>
                 </Grid>
                 <ProgressBar Minimum="0" Maximum="100"

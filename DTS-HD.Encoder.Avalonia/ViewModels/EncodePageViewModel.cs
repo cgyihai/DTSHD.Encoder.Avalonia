@@ -1400,6 +1400,8 @@ public sealed partial class EncodePageViewModel : ViewModelBase
     {
         if (_hooked) return; _hooked = true;
         AppServices.EngineStateChanged += UpdateEngineStatus;
+        // 语言切换时重新本地化引擎状态文本
+        LocalizationManager.LanguageChanged += UpdateEngineStatus;
         if (AppServices.Host != null)
         {
             AppServices.Host.ResponseParsed += OnEngineResponse;
@@ -1434,7 +1436,7 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         if (!AppServices.ToolsetReady)
         {
             EngineRingActive = false;
-            EngineStatusText = "工具集未就绪 · 请到「设置」配置 DTS-HD_Tool 目录";
+            EngineStatusText = LocalizationManager.Get("Lang.Eng.NotReady", "工具集未就绪 · 请到「设置」配置 DTS-HD_Tool 目录");
             EngineStatusState = EngineStatusState.NotReady;
             // 失败/未加载：红色 + ✗
             EngineStatusForeground = Brushes.OrangeRed;
@@ -1447,7 +1449,7 @@ public sealed partial class EncodePageViewModel : ViewModelBase
             string lvl = AppServices.Host?.IsAuthorized == true
                 ? (AppServices.Host.IsMaster ? "Master Audio Suite" : "Surround Audio Suite")
                 : "DTS-HD";
-            EngineStatusText = $"引擎已连接 · {lvl}";
+            EngineStatusText = string.Format(LocalizationManager.Get("Lang.Eng.Connected", "引擎已连接 · {0}"), lvl);
             EngineStatusState = EngineStatusState.Connected;
             // 已连接：绿色
             EngineStatusForeground = Brushes.SeaGreen;
@@ -1457,7 +1459,7 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         {
             // 连接中：圆形加载图旋转 + 黄色文字
             EngineRingActive = true;
-            EngineStatusText = "正在连接引擎…";
+            EngineStatusText = LocalizationManager.Get("Lang.Eng.Connecting", "正在连接引擎…");
             EngineStatusState = EngineStatusState.Connecting;
             // 正在连接：黄色
             EngineStatusForeground = Brushes.Goldenrod;
