@@ -20,6 +20,7 @@ public partial class MainWindow : AppWindow
     public MainWindow()
     {
         InitializeComponent();
+        Services.ToolTipManager.Apply(this); // 鼠标悬浮提示全局开关
         // 应用启动时：恢复主题/Mica 偏好（与 WinUI3 一致）
         ApplyTheme();
         ApplyBackdrop();

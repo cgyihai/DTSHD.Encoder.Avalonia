@@ -6,7 +6,8 @@
 *A modern GUI encoder front-end for DTS-HD Master Audio Suite*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.0.2-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.0-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
+[![Build](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml/badge.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![Avalonia](https://img.shields.io/badge/Avalonia-12.0.3-8b44ac.svg)](https://avaloniaui.net/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011-0078D4.svg)](https://www.microsoft.com/windows)
@@ -39,8 +40,14 @@
 - **双输入模式** — 单个多声道 WAV，或每声道独立的分轨 WAV
 - **31 种声道布局** — 从 1.0 Mono 到 7.1 全变体（`Lss/Rss`、`Lw/Rw`、`Cs/Oh`、`Lhs/Rhs`、`Lh/Rh`、ES Matrix / ES Discrete…），布局与官方 `.cfg` 声道声明顺序完全一致
 - **单文件自动声道重排** — 多声道 WAV 按 `dwChannelMask` 解析实际顺序，自动重排为 DTS 引擎期望顺序并去掉 channel mask，彻底解决 5.1/7.1 声道错位
-- **分轨智能补齐** — 拖入任一声道（`名_L` / `名-L` / `名.L`…），自动识别同目录同名的其它声道并填入
-- **拖放导入** — 文件拖入即按声道名智能归位，未识别的按顺序补齐
+- **音轨自动识别导入** — 随意导入一条音轨（浏览或拖放），自动识别它属于哪个声道并放入对应输入框，同时扫描同目录同组的其它声道一并导入。支持多种命名：
+  - 标准 / 简写：`L R C LFE Ls Rs Lss Rss Lsr Rsr Lrs Rrs Lb Rb Cs Lw Rw Lh Rh Lhs Rhs Oh Ch Lt Rt`
+  - ffmpeg / SMPTE：`FL FR FC LFE SL SR BL BR BC TFL TFR TC`
+  - 英文全称：`Left` `Right` `Center` `Sub` `Left Surround` `Rear Right` `Front_Left`…
+  - 中文：`左` `右` `中置` `重低音` `左环绕` `右后`…
+  - 分隔符 `_ - . 空格 () []` 均可，声道标记后可带其它后缀（如 `Movie_L_48k_24bit.wav`），也支持无分隔符的 `MovieFL.wav`
+- **声道布局自动识别** — 按识别到的声道集合自动切换到最匹配的布局（如 FL/FR/FC/LFE/SL/SR/BL/BR → 7.1，L/R → 2.0）；单文件输入按 WAV `dwChannelMask` / 声道数自动选择布局；可在编码页关闭
+- **智能模式切换** — 分轨模式拖入多声道 WAV 自动切到单文件输入；单文件模式拖入分轨声道文件自动切到分轨输入
 - **实时读取 WAV 头** — 自动显示声道数 / 位宽 / 采样率 / 时长，并按输入自动同步位宽与采样率
 
 #### ⚙️ 编码参数
@@ -78,6 +85,7 @@
 - **分辨率 / DPI 自适应** — 按显示器缩放正确换算窗口尺寸，1080p / 高分屏 / 缩放屏均不再过大或超出屏幕
 - **刷新率自适应** — 跟随显示器 vsync（144Hz 显示器即 144fps，不锁 60）
 - **矢量图标** — 导航图标内嵌矢量路径，任何系统（含精简版 Win10 / Server）都不会出现图标空白
+- **鼠标悬浮提示** — 按钮、输入框、下拉框、选项均有中英双语说明；声道标签悬浮可查看该声道支持的全部文件名写法；设置页可一键关闭
 - **实时双语切换** — 简体中文 / 英文，设置页一键切换、免重启即时生效
 - **主题** — 跟随系统 / 浅色 / 深色；Windows 11 Mica 云母背景
 - **GitHub 在线更新** — 「关于」页一键检查新版本并跳转下载
@@ -129,11 +137,15 @@ EncoderProfiles/          ← 编码设置档（自动生成）
 
 ### 🛠️ 从源码构建
 
+> 每次推送都会由 GitHub Actions 自动编译（见 [Actions](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions)，构建产物可在运行页的 Artifacts 下载）；
+> 合并到 `main` 或推送 `v*` 标签时，会按 csproj 中的版本号自动创建 Release 并附带 `win-x64` 单文件 exe。
+
 1. 安装 **.NET 10 SDK**
-2. 克隆并编译
+2. 克隆并编译（项目引用 [Avalonia-Fluent-UI 2.0.0](https://github.com/HiyorinI/AvaloniaFluentUI) 源码，需克隆到仓库根目录的 `Avalonia-Fluent-UI-2.0.0/`）
    ```bash
    git clone https://github.com/cgyihai/DTSHD.Encoder.Avalonia.git
    cd DTSHD.Encoder.Avalonia
+   git clone --depth 1 --branch V2.0.0 https://github.com/HiyorinI/AvaloniaFluentUI.git Avalonia-Fluent-UI-2.0.0
    dotnet restore
    dotnet build -c Release
    ```
@@ -177,8 +189,9 @@ EncoderProfiles/          ← 编码设置档（自动生成）
 - **Dual input modes** — a single multichannel WAV, or one WAV per channel (split tracks)
 - **31 channel layouts** — 1.0 Mono to every 7.1 variant (`Lss/Rss`, `Lw/Rw`, `Cs/Oh`, `Lhs/Rhs`, `Lh/Rh`, ES Matrix / ES Discrete…), matching the official `.cfg` channel-declaration order exactly
 - **Automatic channel remap for single-file WAV** — parses the real order from `dwChannelMask`, reorders interleaving to what the DTS engine expects and strips the mask, eliminating 5.1/7.1 channel misalignment
-- **Smart sibling detection** — pick one channel (`name_L` / `name-L` / `name.L`…) and matching channels in the same folder are auto-filled
-- **Drag & drop import** with per-channel routing by filename
+- **Automatic track recognition** — import any one track (browse or drag & drop): its channel is recognized and placed in the right row, and the other channels of the same group in the folder are imported too. Recognized naming styles include `L/R/C/LFE/Ls/Rs/Lss/Rss/Lsr/Rsr/Lb/Rb/Cs/Lw/Rw/Lh/Rh/…`, ffmpeg/SMPTE `FL/FR/FC/LFE/SL/SR/BL/BR`, words such as `Left`, `Sub`, `Left Surround`, `Rear Right`, and Chinese names; any of `_ - . space () []` as separators, extra suffixes (`Movie_L_48k_24bit.wav`) and separator-less `MovieFL.wav`
+- **Automatic channel-layout detection** — picks the best layout from the recognized channels (e.g. FL/FR/FC/LFE/SL/SR/BL/BR → 7.1); single-file input uses the WAV `dwChannelMask` / channel count; can be turned off on the Encode page
+- **Smart mode switching** — a multichannel WAV dropped in split mode switches to single-file input, and per-channel files dropped in single-file mode switch to split input
 - **Live WAV header read** — channels / bit-depth / sample rate / duration, auto-syncing bit-width & sample rate to the input
 
 #### ⚙️ Encode Parameters
@@ -216,6 +229,7 @@ EncoderProfiles/          ← 编码设置档（自动生成）
 - **Resolution / DPI adaptive** window sizing (no more oversized windows on 1080p or scaled displays)
 - **Refresh-rate adaptive** rendering (follows display vsync)
 - **Vector icons** — never blank, even on stripped Windows 10 / Server
+- **Hover tooltips** on buttons, fields and options (Chinese / English); hover a channel label to see every file-name tag it recognizes; can be turned off in Settings
 - **Real-time bilingual UI** — Simplified Chinese / English, switch from Settings with no restart
 - Theme (system / light / dark); Windows 11 Mica backdrop
 - **GitHub online update** check from the About page
@@ -254,11 +268,15 @@ This repository **does not contain** and **will not distribute** any proprietary
 
 ### 🛠️ Build from Source
 
+> Every push is compiled by GitHub Actions (see [Actions](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions); download the build from the run's Artifacts).
+> Merging to `main` or pushing a `v*` tag creates a Release for the csproj version with the `win-x64` single-file exe attached.
+
 1. Install **.NET 10 SDK**
-2. Clone & build
+2. Clone & build (the project references the [Avalonia-Fluent-UI 2.0.0](https://github.com/HiyorinI/AvaloniaFluentUI) source, cloned to `Avalonia-Fluent-UI-2.0.0/` at the repo root)
    ```bash
    git clone https://github.com/cgyihai/DTSHD.Encoder.Avalonia.git
    cd DTSHD.Encoder.Avalonia
+   git clone --depth 1 --branch V2.0.0 https://github.com/HiyorinI/AvaloniaFluentUI.git Avalonia-Fluent-UI-2.0.0
    dotnet restore
    dotnet build -c Release
    ```

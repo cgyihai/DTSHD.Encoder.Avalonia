@@ -80,6 +80,14 @@ public sealed partial class EncodePageViewModel : ViewModelBase
     [ObservableProperty] private bool _isSingleFileMode;
     [ObservableProperty] private bool _isSingleFilePanelVisible;
     [ObservableProperty] private bool _isChannelRowsVisible = true;
+    /// <summary>导入音轨时自动识别并切换声道布局（分轨按文件名声道标记，单文件按 WAV dwChannelMask / 声道数）。</summary>
+    [ObservableProperty] private bool _autoDetectLayout = AppServices.Settings.AutoDetectChannelLayout;
+
+    partial void OnAutoDetectLayoutChanged(bool value)
+    {
+        AppServices.Settings.AutoDetectChannelLayout = value;
+        AppServices.SaveSettings();
+    }
     [ObservableProperty] private string _selectedChannelLayoutDisplay =
         ChannelLayouts.Get(ChannelLayout.PA_71_L_R_C_LFE_Lss_Rss_Lsr_Rsr).Display;
     [ObservableProperty] private string _singleFilePath = "";
@@ -243,9 +251,6 @@ public sealed partial class EncodePageViewModel : ViewModelBase
     /// <summary>当前所选声道布局枚举。</summary>
     private ChannelLayout CurrentLayout =>
         ChannelLayouts.All.First(x => x.Display == SelectedChannelLayoutDisplay).Layout;
-
-    // 声道名分隔符（用于从文件名反推前缀，识别同目录同名其它声道）
-    private static readonly string[] Separators = { "_", "-", ".", " ", "" };
 
     public EncodePageViewModel()
     {
@@ -519,6 +524,7 @@ public sealed partial class EncodePageViewModel : ViewModelBase
                     SingleBits = info.Bits;
                     SingleSampleRate = info.SampleRate;
                     SingleChannelCount = info.Channels;
+                    if (AutoDetectLayout) TrySuggestLayoutFromWav(info);
 
                     // 位宽/采样率自动同步（仿分轨行：合法值时才覆盖默认值）
                     if (info.Bits is 16 or 24 && OptionCatalog.BitWidths.Contains(info.Bits))
@@ -531,6 +537,18 @@ public sealed partial class EncodePageViewModel : ViewModelBase
             return;
         }
         Post(AutoFillTimecode);
+    }
+
+    /// <summary>单文件输入：声道数与当前布局不符时，按 dwChannelMask（或标准顺序）自动选择布局。</summary>
+    private void TrySuggestLayoutFromWav(WavInfo info)
+    {
+        if (info.Channels <= 0 || info.Channels == InputChannels(CurrentLayout).Count) return;
+        var roles = ChannelRecognizer.RolesFromMask(info.ChannelMask, info.Channels);
+        if (roles.Count != info.Channels) return;
+        if (ChannelRecognizer.SuggestLayoutForRoles(roles, CurrentLayout) is not { } layout || layout == CurrentLayout) return;
+        var disp = ChannelLayouts.Get(layout).Display;
+        SelectedChannelLayoutDisplay = disp;
+        Log(string.Format(LocalizationManager.Get("Lang.Log.LayoutAuto", "已根据导入的声道自动切换布局：{0}"), disp));
     }
 
     // =========================================================
@@ -564,92 +582,162 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         if (f != null) OutputPath = f;
     }
 
-    /// <summary>任一声道"浏览…"按钮：选文件 → 填入该声道 → 自动补齐同名其它声道。</summary>
+    /// <summary>任一声道"浏览…"按钮：选文件 → 自动识别声道放入对应输入框 → 扫描同目录同组其它声道一并导入。</summary>
     internal async Task PickAndSetChannelFileAsync(string label)
     {
         if (PickChannelFileDelegate == null) return;
         var path = await PickChannelFileDelegate(label);
         if (path == null) return;
-        var row = _channelInputs.FirstOrDefault(c => c.Label == label);
-        if (row != null) row.FilePath = path;
-        AutoFillFrom(path); // 选任一声道即自动补齐同名其它声道
+        ImportChannelFiles(new List<string> { path }, label);
     }
 
-    // 由任一声道文件(名+分隔符+声道)反推前缀/分隔符，识别并填充同目录其它声道
-    public void AutoFillFrom(string path)
+    /// <summary>兼容旧调用：由任一声道文件识别并补齐同组其它声道。</summary>
+    public void AutoFillFrom(string path) => ImportChannelFiles(new List<string> { path }, null);
+
+    /// <summary>
+    /// 分轨导入核心：
+    ///  1. 单个文件 → 识别其声道（L/FL/Left/左…）并扫描同目录同组键的其它声道文件；
+    ///     多个文件 → 逐个识别；
+    ///  2. 若开启"自动识别声道布局"，按识别到的声道集合自动切换到最匹配的布局（如 8 个文件 → 7.1）；
+    ///  3. 把文件放入对应声道输入框；无法识别的文件按自然排序补到空位（单个文件时优先放入所点的行）。
+    /// </summary>
+    private void ImportChannelFiles(IReadOnlyList<string> files, string? preferredLabel)
     {
+        var recognized = new List<(ChannelMatch Match, string Path)>();
+        var unknown = new List<string>();
         try
         {
-            var dir = Path.GetDirectoryName(path)!;
-            var ext = Path.GetExtension(path);
-            var name = Path.GetFileNameWithoutExtension(path);
-            foreach (var lab in InputChannels(CurrentLayout).OrderByDescending(l => l.Length))
-                foreach (var sep in Separators)
+            if (files.Count == 1)
+            {
+                var group = ChannelRecognizer.FindSiblings(files[0]);
+                if (group.Count > 0) recognized.AddRange(group);
+                else unknown.Add(files[0]);
+            }
+            else
+            {
+                var seenRoles = new HashSet<SpeakerRole>();
+                foreach (var f in files)
                 {
-                    var suffix = sep + lab;
-                    if (suffix.Length > 0 && name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        var prefix = name.Substring(0, name.Length - suffix.Length);
-                        FillSiblings(dir, prefix, ext);
-                        return;
-                    }
+                    var m = ChannelRecognizer.Detect(f);
+                    if (m != null && seenRoles.Add(m.Role)) recognized.Add((m, f));
+                    else unknown.Add(f);
                 }
-        }
-        catch { }
-    }
+            }
 
-    private void FillSiblings(string dir, string prefix, string ext)
-    {
-        foreach (var r in _channelInputs)
+            var assignment = ChannelRecognizer.Assign(recognized, CurrentLayout, AutoDetectLayout);
+            if (assignment.Layout != CurrentLayout)
+            {
+                var disp = ChannelLayouts.Get(assignment.Layout).Display;
+                SelectedChannelLayoutDisplay = disp; // 触发 BuildChannelRows 重建输入行
+                Log(string.Format(LocalizationManager.Get("Lang.Log.LayoutAuto", "已根据导入的声道自动切换布局：{0}"), disp));
+            }
+
+            foreach (var kv in assignment.FilesByLabel)
+            {
+                var row = _channelInputs.FirstOrDefault(c => c.Label == kv.Key);
+                if (row != null) row.FilePath = kv.Value;
+            }
+
+            unknown.AddRange(assignment.Unassigned);
+            unknown.Sort(NaturalCompare);
+            if (unknown.Count == 1 && preferredLabel != null && files.Count == 1)
+            {
+                var row = _channelInputs.FirstOrDefault(c => c.Label == preferredLabel);
+                if (row != null) { row.FilePath = unknown[0]; unknown.Clear(); }
+            }
+            int idx = 0;
+            foreach (var f in unknown)
+            {
+                while (idx < _channelInputs.Count && !string.IsNullOrEmpty(_channelInputs[idx].FilePath)) idx++;
+                if (idx >= _channelInputs.Count) break;
+                _channelInputs[idx].FilePath = f; idx++;
+            }
+
+            if (assignment.FilesByLabel.Count > 0)
+            {
+                var detail = string.Join(", ", assignment.FilesByLabel
+                    .OrderBy(kv => _channelInputs.FindIndex(r => r.Label == kv.Key))
+                    .Select(kv => $"{kv.Key}←{Path.GetFileName(kv.Value)}"));
+                Log(string.Format(LocalizationManager.Get("Lang.Log.ChannelsRecognized", "已识别 {0} 个声道：{1}"),
+                    assignment.FilesByLabel.Count, detail));
+            }
+            int empty = _channelInputs.Count(r => string.IsNullOrEmpty(r.FilePath));
+            if (empty > 0)
+                Log(string.Format(LocalizationManager.Get("Lang.Log.ChannelsMissing", "仍有 {0} 个声道未导入：{1}"),
+                    empty, string.Join(", ", _channelInputs.Where(r => string.IsNullOrEmpty(r.FilePath)).Select(r => r.Label))));
+        }
+        catch (Exception ex)
         {
-            if (!string.IsNullOrEmpty(r.FilePath)) continue;
-            foreach (var s in Separators)
-            {
-                var cand = Path.Combine(dir, prefix + s + r.Label + ext);
-                if (File.Exists(cand)) { r.FilePath = cand; break; }
-            }
+            Log("声道识别失败: " + ex.Message);
         }
     }
 
-    // 判断文件属于当前布局的哪个声道（最长标签优先）
-    private string? DetectChannel(string path)
+    /// <summary>自然排序（Track2 排在 Track10 之前）。</summary>
+    private static int NaturalCompare(string? a, string? b)
     {
-        var name = Path.GetFileNameWithoutExtension(path);
-        foreach (var lab in InputChannels(CurrentLayout).OrderByDescending(l => l.Length))
-            foreach (var sep in Separators)
+        a ??= ""; b ??= "";
+        int i = 0, j = 0;
+        while (i < a.Length && j < b.Length)
+        {
+            if (char.IsDigit(a[i]) && char.IsDigit(b[j]))
             {
-                var suffix = sep + lab;
-                if (suffix.Length > 0 && name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
-                    return lab;
+                int si = i, sj = j;
+                while (i < a.Length && char.IsDigit(a[i])) i++;
+                while (j < b.Length && char.IsDigit(b[j])) j++;
+                var na = a[si..i].TrimStart('0'); var nb = b[sj..j].TrimStart('0');
+                int c = na.Length != nb.Length ? na.Length.CompareTo(nb.Length) : string.CompareOrdinal(na, nb);
+                if (c != 0) return c;
             }
-        return null;
+            else
+            {
+                int c = char.ToUpperInvariant(a[i]).CompareTo(char.ToUpperInvariant(b[j]));
+                if (c != 0) return c;
+                i++; j++;
+            }
+        }
+        return (a.Length - i).CompareTo(b.Length - j);
     }
 
     // ---------- 拖放导入 ----------
-    /// <summary>页面级拖入文件批量导入（由 View 的 DragDrop 处理器调用）。</summary>
+    /// <summary>页面级拖入文件批量导入（由 View 的 DragDrop 处理器调用）。
+    /// 单文件模式下拖入可识别的单声道分轨 / 多个文件 → 自动切到分轨模式；
+    /// 分轨模式下拖入无声道标记的多声道 WAV → 自动切到单文件模式。</summary>
     public void ImportFiles(List<string> files)
     {
         if (files == null || files.Count == 0) return;
-        if (IsSingleFileMode) { SingleFilePath = files[0]; return; }
+        files = files.Where(f => !Directory.Exists(f)).ToList();
+        if (files.Count == 0) return;
+        Log(string.Format(LocalizationManager.Get("Lang.Log.Dropped", "拖入 {0} 个文件。"), files.Count));
 
-        var unmatched = new List<string>();
-        foreach (var f in files)
+        if (files.Count == 1)
         {
-            var ch = DetectChannel(f);
-            var pair = ch == null ? null : _channelInputs.FirstOrDefault(c => c.Label == ch);
-            if (pair != null) pair.FilePath = f;
-            else unmatched.Add(f);
+            var f = files[0];
+            var match = ChannelRecognizer.Detect(f);
+            int channels = WavInfo.TryRead(f)?.Channels ?? 0;
+            bool multiChannel = channels > 1;
+            if (multiChannel && (match == null || IsSingleFileMode))
+            {
+                if (!IsSingleFileMode)
+                {
+                    IsSingleFileMode = true;
+                    Log(LocalizationManager.Get("Lang.Log.SwitchSingle", "检测到多声道 WAV，已切换到单文件输入。"));
+                }
+                SingleFilePath = f;
+                return;
+            }
+            if (IsSingleFileMode && match == null)
+            {
+                SingleFilePath = f;
+                return;
+            }
         }
-        if (files.Count == 1 && DetectChannel(files[0]) != null)
-            AutoFillFrom(files[0]); // 单个已识别 → 自动补齐同名其它声道
-        int idx = 0;
-        foreach (var f in unmatched)
+
+        if (IsSingleFileMode)
         {
-            while (idx < _channelInputs.Count && !string.IsNullOrEmpty(_channelInputs[idx].FilePath)) idx++;
-            if (idx >= _channelInputs.Count) break;
-            _channelInputs[idx].FilePath = f; idx++;
+            IsSingleFileMode = false;
+            Log(LocalizationManager.Get("Lang.Log.SwitchSplit", "检测到分轨声道文件，已切换到分轨输入。"));
         }
-        Log($"拖入 {files.Count} 个文件。");
+        ImportChannelFiles(files, null);
     }
 
     [RelayCommand]
@@ -1545,10 +1633,14 @@ public sealed partial class ChannelRowViewModel : ObservableObject
     private readonly EncodePageViewModel _parent;
     public string Label { get; }
 
+    /// <summary>该声道可被自动识别的文件名写法（悬浮提示用）。</summary>
+    public string AliasTip { get; }
+
     public ChannelRowViewModel(string label, EncodePageViewModel parent)
     {
         Label = label;
         _parent = parent;
+        AliasTip = ChannelRecognizer.DescribeAliases(label);
     }
 
     [ObservableProperty] private string _filePath = "";

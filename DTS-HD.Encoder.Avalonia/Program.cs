@@ -64,8 +64,8 @@ internal sealed class Program
             })
             .With(new X11PlatformOptions
             {
-                // Linux 下使用 GLX GPU 渲染
-                RenderingMode = [X11RenderingMode.Glx],
+                // Linux 下优先 GLX GPU 渲染，无 GLX（虚拟机/远程桌面）时回退软件渲染，避免启动崩溃
+                RenderingMode = [X11RenderingMode.Glx, X11RenderingMode.Software],
             })
 #if DEBUG
             .WithDeveloperTools()

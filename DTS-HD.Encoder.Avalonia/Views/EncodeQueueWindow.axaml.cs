@@ -18,6 +18,7 @@ public partial class EncodeQueueWindow : AppWindow
     public EncodeQueueWindow()
     {
         InitializeComponent();
+        Services.ToolTipManager.Apply(this); // 鼠标悬浮提示全局开关
         // 同步主题与 Mica 背景与主窗口一致
         ApplyTheme();
         ApplyBackdrop();

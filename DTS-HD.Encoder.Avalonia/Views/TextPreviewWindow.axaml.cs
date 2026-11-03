@@ -26,6 +26,7 @@ public partial class TextPreviewWindow : AppWindow
     public TextPreviewWindow()
     {
         InitializeComponent();
+        Services.ToolTipManager.Apply(this); // 鼠标悬浮提示全局开关
         ApplyTheme();
         ApplyBackdrop();
     }

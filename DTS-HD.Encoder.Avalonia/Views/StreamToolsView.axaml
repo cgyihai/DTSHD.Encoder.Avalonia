@@ -46,13 +46,13 @@
         <TabControl Grid.Row="1" Padding="0">
 
             <!-- 1. 信息 -->
-            <TabItem Header="{DynamicResource Lang.T54}">
+            <TabItem Header="{DynamicResource Lang.T54}" ToolTip.Tip="{DynamicResource Lang.T55}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T55}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                             <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T56}" Text="{Binding InfoFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="InfoFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="InfoFile" Margin="0,0,8,0"/>
                             <Button Grid.Column="2" Content="{DynamicResource Lang.T57}" Classes="accent" Command="{Binding InfoCommand}"/>
                         </Grid>
                     </StackPanel>
@@ -60,13 +60,13 @@
             </TabItem>
 
             <!-- 2. 校验 -->
-            <TabItem Header="{DynamicResource Lang.T58}">
+            <TabItem Header="{DynamicResource Lang.T58}" ToolTip.Tip="{DynamicResource Lang.T59}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T59}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                             <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T56}" Text="{Binding VerifyFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="VerifyFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="VerifyFile" Margin="0,0,8,0"/>
                             <Button Grid.Column="2" Content="{DynamicResource Lang.T58}" Classes="accent" Command="{Binding VerifyCommand}"/>
                         </Grid>
                     </StackPanel>
@@ -74,28 +74,28 @@
             </TabItem>
 
             <!-- 3. 拆分 -->
-            <TabItem Header="{DynamicResource Lang.T60}">
+            <TabItem Header="{DynamicResource Lang.T60}" ToolTip.Tip="{DynamicResource Lang.T61}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T61}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText=".dtshd" Text="{Binding SplitIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="SplitIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="SplitIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,160" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T63}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding SplitTc, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding SplitTc, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T64}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="part1.dtshd" Text="{Binding SplitOut1, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut1"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="SplitOut1"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T65}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="part2.dtshd" Text="{Binding SplitOut2, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SplitOut2"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="SplitOut2"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T60}" Classes="accent" Command="{Binding SplitCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
@@ -103,24 +103,24 @@
             </TabItem>
 
             <!-- 4. 合并 -->
-            <TabItem Header="{DynamicResource Lang.T66}">
+            <TabItem Header="{DynamicResource Lang.T66}" ToolTip.Tip="{DynamicResource Lang.T67}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T67}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T68}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding JoinF1, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="JoinF1"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="JoinF1"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T69}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding JoinF2, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="JoinF2"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="JoinF2"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="joined.dtshd" Text="{Binding JoinOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="JoinOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="JoinOut"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T66}" Classes="accent" Command="{Binding JoinCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
@@ -128,25 +128,25 @@
             </TabItem>
 
             <!-- 5. 裁剪 -->
-            <TabItem Header="{DynamicResource Lang.T70}">
+            <TabItem Header="{DynamicResource Lang.T70}" ToolTip.Tip="{DynamicResource Lang.T71}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T71}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding TrimIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="TrimIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="TrimIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150,Auto,150" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T72}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding TrimStart, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding TrimStart, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T73}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="3" Text="{Binding TrimEnd, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="3" Text="{Binding TrimEnd, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="trimmed.dtshd" Text="{Binding TrimOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="TrimOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="TrimOut"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T70}" Classes="accent" Command="{Binding TrimCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
@@ -154,29 +154,29 @@
             </TabItem>
 
             <!-- 6. 加静音 -->
-            <TabItem Header="{DynamicResource Lang.T74}">
+            <TabItem Header="{DynamicResource Lang.T74}" ToolTip.Tip="{DynamicResource Lang.T75}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T75}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding SilIn, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="SilIn"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="SilIn"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150,Auto,150" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T76}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding SilHead, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding SilHead, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SilenceLen}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T77}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="3" Text="{Binding SilTail, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="3" Text="{Binding SilTail, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SilenceLen}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,150" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding SilNewTc, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding SilNewTc, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                         </Grid>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="with_silence.dtshd" Text="{Binding SilOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="SilOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="SilOut"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T74}" Classes="accent" Command="{Binding AddSilenceCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
@@ -184,14 +184,14 @@
             </TabItem>
 
             <!-- 7. 重打时间码 -->
-            <TabItem Header="{DynamicResource Lang.T79}">
+            <TabItem Header="{DynamicResource Lang.T79}" ToolTip.Tip="{DynamicResource Lang.T80}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T80}" FontWeight="SemiBold" TextWrapping="Wrap"/>
                         <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T6}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding ReFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="ReFile"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="ReFile"/>
                         </Grid>
                         <!-- 原始值（只读，自动读取）：对应官方 Restripe 面板的 Original Start Time / Original Frame Rate -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
@@ -203,11 +203,11 @@
                         </StackPanel>
                         <Grid ColumnDefinitions="90,150,Auto,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding ReStart, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding ReStart, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T84}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="3" Width="130"
                                       ItemsSource="{Binding FrameRateOptions}"
-                                      SelectedIndex="{Binding SelectedReFpsIndex, Mode=TwoWay}"/>
+                                      SelectedIndex="{Binding SelectedReFpsIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.FrameRate}"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T79}" Classes="accent" Command="{Binding RestripeCommand}" HorizontalAlignment="Left"/>
                     </StackPanel>
@@ -215,14 +215,14 @@
             </TabItem>
 
             <!-- 8. 元数据 -->
-            <TabItem Header="{DynamicResource Lang.T85}">
+            <TabItem Header="{DynamicResource Lang.T85}" ToolTip.Tip="{DynamicResource Lang.T86}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T86}" FontWeight="SemiBold" TextWrapping="Wrap"/>
                         <Grid ColumnDefinitions="90,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T6}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" Text="{Binding MetaFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="MetaFile"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="MetaFile"/>
                         </Grid>
                         <!-- 原始值（只读，自动读取）：对应官方 Metadata 面板的 Original Start / Frame Rate / Dial Norm -->
                         <StackPanel Orientation="Horizontal" Spacing="6">
@@ -236,15 +236,15 @@
                         </StackPanel>
                         <Grid ColumnDefinitions="90,150,Auto,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T78}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding MetaStart, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding MetaStart, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                             <TextBlock Grid.Column="2" Text="{DynamicResource Lang.T84}" VerticalAlignment="Center"/>
                             <ComboBox Grid.Column="3" Width="130"
                                       ItemsSource="{Binding FrameRateOptions}"
-                                      SelectedIndex="{Binding SelectedMetaFpsIndex, Mode=TwoWay}"/>
+                                      SelectedIndex="{Binding SelectedMetaFpsIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.FrameRate}"/>
                         </Grid>
                         <Grid ColumnDefinitions="90,150,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T87}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding MetaDialNorm, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Text="{Binding MetaDialNorm, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.MetaDialNorm}"/>
                             <TextBlock Grid.Column="2" Text="dBFS" VerticalAlignment="Center" Opacity="0.6"/>
                         </Grid>
                         <Button Content="{DynamicResource Lang.T88}" Classes="accent" Command="{Binding MetadataCommand}" HorizontalAlignment="Left"/>
@@ -253,14 +253,14 @@
             </TabItem>
 
             <!-- 9. 追加合并（多文件行 ItemsControl，行模板绑定 AppendRowViewModel） -->
-            <TabItem Header="{DynamicResource Lang.T89}">
+            <TabItem Header="{DynamicResource Lang.T89}" ToolTip.Tip="{DynamicResource Lang.T90}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T90}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="10">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
                             <TextBox Grid.Column="1" PlaceholderText="appended.dtshd" Text="{Binding AppendOut, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" CommandParameter="AppendOut"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSaveCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" CommandParameter="AppendOut"/>
                         </Grid>
                         <TextBlock Text="{DynamicResource Lang.T91}" Opacity="0.7"/>
                         <ItemsControl ItemsSource="{Binding AppendRows}">
@@ -273,16 +273,16 @@
                                 <DataTemplate x:DataType="vm:AppendRowViewModel">
                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
                                         <TextBox Grid.Column="0" PlaceholderText=".dtshd" Text="{Binding FilePath, Mode=TwoWay}"/>
-                                        <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}"/>
-                                        <TextBox Grid.Column="2" Width="120" Text="{Binding Start, Mode=TwoWay}"/>
-                                        <TextBox Grid.Column="3" Width="120" Text="{Binding End, Mode=TwoWay}"/>
-                                        <Button Grid.Column="4" Content="✕" Command="{Binding RemoveCommand}"/>
+                                        <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}"/>
+                                        <TextBox Grid.Column="2" Width="120" Text="{Binding Start, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
+                                        <TextBox Grid.Column="3" Width="120" Text="{Binding End, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
+                                        <Button Grid.Column="4" Content="✕" Command="{Binding RemoveCommand}" ToolTip.Tip="{DynamicResource Tip.RemoveRow}"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Content="{DynamicResource Lang.T92}" Command="{Binding AddAppendRowCommand}"/>
+                            <Button Content="{DynamicResource Lang.T92}" Command="{Binding AddAppendRowCommand}" ToolTip.Tip="{DynamicResource Tip.AddRow}"/>
                             <Button Content="{DynamicResource Lang.T89}" Classes="accent" Command="{Binding AppendCommand}"/>
                         </StackPanel>
                     </StackPanel>
@@ -290,13 +290,13 @@
             </TabItem>
 
             <!-- 10. PBR 分析（Canvas 在 code-behind 按 PbrPoints 绘制折线图） -->
-            <TabItem Header="{DynamicResource Lang.T93}">
+            <TabItem Header="{DynamicResource Lang.T93}" ToolTip.Tip="{DynamicResource Lang.T94}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T94}" FontWeight="SemiBold"/>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
                             <TextBox Grid.Column="0" PlaceholderText="{DynamicResource Lang.T95}" Text="{Binding PbrFile, Mode=TwoWay}"/>
-                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" CommandParameter="PbrFile" Margin="0,0,8,0"/>
+                            <Button Grid.Column="1" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" CommandParameter="PbrFile" Margin="0,0,8,0"/>
                             <Button Grid.Column="2" Content="{DynamicResource Lang.T96}" Classes="accent" Command="{Binding PbrCommand}"/>
                         </Grid>
                         <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="6"
@@ -309,14 +309,14 @@
             </TabItem>
 
             <!-- 11. 原始命令 -->
-            <TabItem Header="{DynamicResource Lang.T98}">
+            <TabItem Header="{DynamicResource Lang.T98}" ToolTip.Tip="{DynamicResource Lang.T99}">
                 <Border Classes="card">
                     <StackPanel Spacing="10">
                         <TextBlock Text="{DynamicResource Lang.T99}" FontWeight="SemiBold"/>
                         <TextBox PlaceholderText='例如: T I "D:\out\title.dtshd"' Text="{Binding RawCmd, Mode=TwoWay}"/>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Content="{DynamicResource Lang.T100}" Command="{Binding RawSendCommand}"/>
-                            <Button Content="{DynamicResource Lang.T101}" Command="{Binding CancelOpCommand}"/>
+                            <Button Content="{DynamicResource Lang.T100}" Command="{Binding RawSendCommand}" ToolTip.Tip="{DynamicResource Tip.RawSend}"/>
+                            <Button Content="{DynamicResource Lang.T101}" Command="{Binding CancelOpCommand}" ToolTip.Tip="{DynamicResource Tip.CancelOp}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

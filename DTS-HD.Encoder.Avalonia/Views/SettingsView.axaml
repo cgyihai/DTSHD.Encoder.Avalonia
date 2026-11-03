@@ -54,8 +54,8 @@
                     <!-- 工具集目录行 -->
                     <Grid ColumnDefinitions="120,*,Auto" ColumnSpacing="10">
                         <TextBlock Grid.Column="0" Text="{DynamicResource Lang.Settings.ToolDir}" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding ToolDir, Mode=TwoWay}"/>
-                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseToolDirCommand}"/>
+                        <TextBox Grid.Column="1" Text="{Binding ToolDir, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.ToolDir}"/>
+                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseToolDirCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseFolder}"/>
                     </Grid>
 
                     <!-- 状态行 -->
@@ -67,8 +67,8 @@
                         <TextBlock Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"
                                    Text="{Binding StatusText}"/>
                         <Button Grid.Column="2" Content="{DynamicResource Lang.Settings.AutoDetect}" Margin="0,0,8,0"
-                                Command="{Binding DetectCommand}"/>
-                        <Button Grid.Column="3" Content="{DynamicResource Lang.Settings.OpenDir}" Command="{Binding OpenDirCommand}"/>
+                                Command="{Binding DetectCommand}" ToolTip.Tip="{DynamicResource Tip.AutoDetect}"/>
+                        <Button Grid.Column="3" Content="{DynamicResource Lang.Settings.OpenDir}" Command="{Binding OpenDirCommand}" ToolTip.Tip="{DynamicResource Tip.OpenDir}"/>
                     </Grid>
 
                     <!-- 工具存在性清单 -->
@@ -91,7 +91,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="{DynamicResource Lang.Settings.SaveReconnect}" Classes="accent" Command="{Binding SaveReconnectCommand}"/>
+                    <Button Content="{DynamicResource Lang.Settings.SaveReconnect}" Classes="accent" Command="{Binding SaveReconnectCommand}" ToolTip.Tip="{DynamicResource Tip.SaveReconnect}"/>
                 </StackPanel>
             </Border>
 
@@ -103,20 +103,26 @@
                         <StackPanel Spacing="4">
                             <TextBlock Text="{DynamicResource Lang.Settings.Mica}"/>
                             <ToggleSwitch OnContent="{DynamicResource Lang.Settings.On}" OffContent="{DynamicResource Lang.Settings.Off}"
-                                          IsChecked="{Binding MicaEnabled, Mode=TwoWay}"/>
+                                          IsChecked="{Binding MicaEnabled, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Mica}"/>
                         </StackPanel>
                         <StackPanel Spacing="4">
                             <TextBlock Text="{DynamicResource Lang.Settings.Theme}"/>
                             <ComboBox Width="160"
                                       ItemsSource="{Binding ThemeOptions}"
-                                      SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}"/>
+                                      SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Theme}"/>
+                        </StackPanel>
+                        <!-- 鼠标悬浮提示开关 -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Lang.Settings.ShowToolTips}"/>
+                            <ToggleSwitch OnContent="{DynamicResource Lang.Settings.On}" OffContent="{DynamicResource Lang.Settings.Off}"
+                                          IsChecked="{Binding ShowToolTips, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.ShowToolTips}"/>
                         </StackPanel>
                         <!-- 语言：实时切换简体中文 / 英文 -->
                         <StackPanel Spacing="4">
                             <TextBlock Text="{DynamicResource Lang.Settings.Language}"/>
                             <ComboBox Width="160"
                                       ItemsSource="{Binding LanguageOptions}"
-                                      SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}"/>
+                                      SelectedIndex="{Binding SelectedLanguageIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Language}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -140,14 +146,14 @@
 
                     <!-- 在线更新：点击"检查更新"查询 GitHub 最新 Release；发现新版时出现"前往下载"。 -->
                     <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0" VerticalAlignment="Center">
-                        <Button Content="{DynamicResource Lang.Settings.CheckUpdate}" Command="{Binding CheckUpdateCommand}"/>
-                        <Button Classes="link" Content="{DynamicResource Lang.Settings.OpenDownload}" Command="{Binding OpenDownloadCommand}"
+                        <Button Content="{DynamicResource Lang.Settings.CheckUpdate}" Command="{Binding CheckUpdateCommand}" ToolTip.Tip="{DynamicResource Tip.CheckUpdate}"/>
+                        <Button Classes="link" Content="{DynamicResource Lang.Settings.OpenDownload}" Command="{Binding OpenDownloadCommand}" ToolTip.Tip="{DynamicResource Tip.OpenDownload}"
                                 IsVisible="{Binding UpdateAvailable}"/>
                         <TextBlock Text="{Binding UpdateStatus}" Opacity="0.8" VerticalAlignment="Center" TextWrapping="Wrap"/>
                     </StackPanel>
                     <!-- 启动时自动检查更新开关 -->
                     <CheckBox Content="{DynamicResource Lang.Settings.AutoCheckUpdate}" Margin="0,4,0,0"
-                              IsChecked="{Binding AutoCheckUpdate, Mode=TwoWay}"/>
+                              IsChecked="{Binding AutoCheckUpdate, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.AutoCheckUpdate}"/>
                 </StackPanel>
             </Border>
 

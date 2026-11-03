@@ -89,6 +89,17 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     /// <summary>启动时自动检查更新（绑定设置页开关）。</summary>
     [ObservableProperty] private bool _autoCheckUpdate = AppServices.Settings.AutoCheckUpdate;
 
+    /// <summary>显示鼠标悬浮提示（实时生效，持久化）。</summary>
+    [ObservableProperty] private bool _showToolTips = AppServices.Settings.ShowToolTips;
+
+    partial void OnShowToolTipsChanged(bool value)
+    {
+        if (_loading) return;
+        AppServices.Settings.ShowToolTips = value;
+        AppServices.SaveSettings();
+        ToolTipManager.ApplyToAllWindows();
+    }
+
     partial void OnAutoCheckUpdateChanged(bool value)
     {
         if (_loading) return;

@@ -22,6 +22,10 @@ public sealed class AppSettings
     public int LogLines { get; set; } = 800;
     /// <summary>启动时自动检查 GitHub 新版本（默认开启；仅在发现更新时提示）。</summary>
     public bool AutoCheckUpdate { get; set; } = true;
+    /// <summary>导入音轨时自动识别声道并切换声道布局（默认开启）。</summary>
+    public bool AutoDetectChannelLayout { get; set; } = true;
+    /// <summary>显示鼠标悬浮提示（默认开启）。</summary>
+    public bool ShowToolTips { get; set; } = true;
 
     private static string ConfigPath =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
