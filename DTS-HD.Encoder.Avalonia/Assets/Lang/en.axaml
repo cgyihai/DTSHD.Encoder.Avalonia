@@ -264,4 +264,6 @@
     <sys:String x:Key="Tip.CheckUpdate">Check GitHub for the latest release</sys:String>
     <sys:String x:Key="Tip.OpenDownload">Open the download page of the new version</sys:String>
     <sys:String x:Key="Tip.AutoCheckUpdate">Check for a new version at startup; you are only prompted when one exists</sys:String>
+    <sys:String x:Key="Lang.Settings.PageTransition">Page transitions</sys:String>
+    <sys:String x:Key="Tip.PageTransition">Play a short slide-and-fade when switching pages (the new page is snapshotted once and animated by the GPU compositor, smooth even at 4K / high refresh rates)</sys:String>
 </ResourceDictionary>

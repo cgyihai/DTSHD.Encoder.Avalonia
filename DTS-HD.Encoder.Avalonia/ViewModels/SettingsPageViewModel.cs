@@ -92,6 +92,17 @@ public sealed partial class SettingsPageViewModel : ViewModelBase
     /// <summary>显示鼠标悬浮提示（实时生效，持久化）。</summary>
     [ObservableProperty] private bool _showToolTips = AppServices.Settings.ShowToolTips;
 
+    /// <summary>页面切换动画（实时生效，持久化）。</summary>
+    [ObservableProperty] private bool _pageTransitionEnabled = AppServices.Settings.PageTransitionEnabled;
+
+    partial void OnPageTransitionEnabledChanged(bool value)
+    {
+        if (_loading) return;
+        AppServices.Settings.PageTransitionEnabled = value;
+        AppServices.SaveSettings();
+        Controls.PageHost.AnimationsEnabled = value;
+    }
+
     partial void OnShowToolTipsChanged(bool value)
     {
         if (_loading) return;

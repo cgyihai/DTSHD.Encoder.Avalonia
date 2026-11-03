@@ -5,6 +5,30 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.1.2] - 2026-11-03
+
+修复 **4K / 144Hz 下切换页面动画严重掉帧**。
+Fixes **severe frame drops in page-switch animations at 4K / 144 Hz**.
+
+### 🐛 修复 / Fixed
+- **页面不再每次切换都重建**：旧版每次切换都重新创建整个页面（编码页约 800 个控件，构建 + 布局约 100ms），
+  动画前十几帧直接丢失。现每个页面只创建一次并常驻，切换即时完成。
+  *Pages are created once and kept alive instead of being rebuilt on every switch (~100 ms for the Encode page).*
+- **切换动画改为"快照 + 合成层动画"**：旧版在 UI 线程上对整页做位移 + 透明度动画，Avalonia 每帧都要重新光栅化整页，
+  4K 下远超 6.9ms 帧预算。现在先在渲染线程把新页面拍成一张快照，动画期间只对这张位图做渲染线程上的合成动画
+  （220ms 轻量上滑淡入），每帧仅一次贴图，与 WinUI 的做法一致。
+  *The transition now snapshots the new page once and animates the bitmap on the compositor/render thread, like WinUI does.*
+- **设置页新增「页面切换动画」开关**（默认关闭，实时生效）。
+  *New "Page transitions" switch in Settings (off by default).*
+- 编码页「比特流 / 下混」折叠面板去掉整块内容的淡入淡出（同样会导致大面积逐帧重绘）。
+  *Removed the cross-fade on the Bitstream / Downmix expanders.*
+- 修复每次回到编码页都会把主音频衰减、单声道映射与下混推子重置为默认值的问题。
+  *Returning to the Encode page no longer resets the attenuation / downmix faders to defaults.*
+- 不再依赖修改版 Avalonia-Fluent-UI 的 StackContent，GitHub 编译版与本地编译版行为一致。
+  *No longer depends on a locally modified Fluent UI StackContent, so CI builds behave like local builds.*
+
+---
+
 ## [1.1.1] - 2026-11-03
 
 修复**编码一直卡在「编码中… 99%」**（引擎实际已出错或已退出，界面却无限等待）。
@@ -127,6 +151,7 @@ Focus on **cross-machine compatibility**, **resolution/DPI adaptivity**, **encod
 - 首个公开版本：DTS-HD Master Audio 编码 GUI（音频编码 / 比特流元数据 / 下混 / 队列 / StreamTools）。
   *Initial public release: DTS-HD Master Audio encoding GUI.*
 
+[1.1.2]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.2
 [1.1.1]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.1
 [1.1.0]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.0
 [1.0.2]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
