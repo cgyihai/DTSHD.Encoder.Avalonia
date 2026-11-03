@@ -78,9 +78,13 @@ public sealed class DtsCommClient : IDisposable
     public void SendCommand(string command)
     {
         if (_stream == null) throw new InvalidOperationException("未连接到引擎。");
-        byte[] payload = Encoding.UTF8.GetBytes(command);
+        // 引擎按系统 ANSI 代码页解析命令（与官方 Java GUI 一致）；长度头 = payload 字节数
+        byte[] payload = EngineText.GetBytes(command);
         if (payload.Length > 9999) throw new ArgumentException("命令过长（>9999 字节）。");
-        byte[] frame = Encoding.UTF8.GetBytes(payload.Length.ToString("D4") + command);
+        byte[] header = Encoding.ASCII.GetBytes(payload.Length.ToString("D4"));
+        var frame = new byte[header.Length + payload.Length];
+        header.CopyTo(frame, 0);
+        payload.CopyTo(frame, header.Length);
         _stream.Write(frame, 0, frame.Length);
         _stream.Flush();
     }
@@ -113,19 +117,20 @@ public sealed class DtsCommClient : IDisposable
                     var arr = acc.ToArray();
                     if (!int.TryParse(Encoding.ASCII.GetString(arr, 0, 4), out int len)) { acc.Clear(); break; }
                     if (acc.Count < 4 + len) break;
-                    string payload = Encoding.UTF8.GetString(arr, 4, len);
+                    string payload = EngineText.GetString(arr, 4, len);
                     acc.RemoveRange(0, 4 + len);
                     ResponseReceived?.Invoke(payload);
                 }
             }
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) { return; }
         catch (Exception ex)
         {
-            // 连接异常断开，通知上层
-            ConnectionLost?.Invoke(ex.Message);
+            // 连接异常断开，通知上层（只通知一次）
+            if (!token.IsCancellationRequested) ConnectionLost?.Invoke(ex.Message);
+            return;
         }
-        // 正常退出（服务端关闭或取消）也通知
+        // 正常退出（服务端关闭连接）也通知
         if (!token.IsCancellationRequested)
             ConnectionLost?.Invoke(null);
     }

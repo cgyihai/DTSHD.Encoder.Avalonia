@@ -310,7 +310,15 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
             var tools = Tools;
             if (tools == null || !await tools.EnsureConnectedAsync()) { Log("无法连接 StreamTools 引擎。"); return; }
             OpStatus = ""; OpProgressValue = 0;
-            tools.Send(cmd); Log(">> " + cmd);
+            // 路径转换为引擎可识别的形式（中文路径 → 8.3 短路径 / 系统代码页），否则引擎打不开文件
+            var engineCmd = EngineText.MakeCommandPathsSafe(cmd, out var bad);
+            if (bad.Count > 0)
+            {
+                Log("!! 以下路径包含 DTS 引擎无法识别的字符，请改用英文/数字命名后重试：");
+                foreach (var b in bad) Log("   " + b);
+                return;
+            }
+            tools.Send(engineCmd); Log(">> " + engineCmd);
         }
         catch (Exception ex) { Log("发送失败: " + ex.Message); }
     }
@@ -414,7 +422,7 @@ public sealed partial class StreamToolsPageViewModel : ViewModelBase
         {
             if (!await tools.EnsureConnectedAsync()) return;
             _pendingMetaTarget = target;
-            tools.Send(ToolsCommands.FileMetadata(f));
+            tools.Send(EngineText.MakeCommandPathsSafe(ToolsCommands.FileMetadata(f), out _));
         }
         catch { /* 查询失败不影响手动填写 */ }
     }

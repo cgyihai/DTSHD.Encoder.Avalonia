@@ -594,7 +594,7 @@
                     <!-- 总进度条 -->
                     <StackPanel Spacing="4">
                         <TextBlock Text="{Binding ProgressText}" FontSize="12" Opacity="0.8"/>
-                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding OverallProgress}" Height="6"/>
+                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding OverallProgress}" IsIndeterminate="{Binding IsProgressIndeterminate}" Height="6"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

@@ -6,7 +6,7 @@
 *A modern GUI encoder front-end for DTS-HD Master Audio Suite*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.1.0-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.1-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
 [![Build](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml/badge.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![Avalonia](https://img.shields.io/badge/Avalonia-12.0.3-8b44ac.svg)](https://avaloniaui.net/)
