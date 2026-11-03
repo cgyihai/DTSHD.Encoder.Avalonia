@@ -211,6 +211,8 @@ public sealed partial class EncodePageViewModel : ViewModelBase
     // —— 进度 / 引擎状态 / 日志 ——（预览改为弹窗形式，由 View 调用 BuildCfgPreview/BuildCommandPreview）
     [ObservableProperty] private string _progressText = "就绪";
     [ObservableProperty] private double _overallProgress;
+    /// <summary>引擎未上报进度、也无法按输出大小估算时显示不定进度条（不再用"已用时间/音频时长"伪造百分比）。</summary>
+    [ObservableProperty] private bool _isProgressIndeterminate;
     [ObservableProperty] private EncodeProgressState _progressState = EncodeProgressState.Idle;
     [ObservableProperty] private string _engineStatusText = "正在连接引擎…";
     [ObservableProperty] private EngineStatusState _engineStatusState = EngineStatusState.Connecting;
@@ -240,10 +242,10 @@ public sealed partial class EncodePageViewModel : ViewModelBase
     private double _singleSeconds;
     private bool _hooked;
 
-    // 引擎上报的编码百分比（'D' 帧，最准确的进度源）；-1 表示尚未收到
-    private volatile int _enginePercent = -1;
     // 单调递增锁：防止进度回退（文件大小估算波动时）
     private int _maxPct;
+    // 当前正在监视的任务（只把它的引擎帧反映到进度栏）
+    private EncodeJob? _monitoredJob;
 
     // 当前布局下的声道标签（供 View 刷新 SpeakerLayout 图示）
     public IReadOnlyList<string> CurrentChannels => _channelInputs.Select(c => c.Label).ToList();
@@ -865,6 +867,8 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         var outPath = (OutputPath ?? "").Trim();
         if (!string.IsNullOrEmpty(outPath))
         {
+            // 相对路径会被引擎按其工作目录（DTS-HD_Tool）解析，与界面监视的位置不一致 → 统一转绝对路径
+            try { outPath = Path.GetFullPath(outPath); } catch { }
             var dir = Path.GetDirectoryName(outPath);
             s.SaveToDirectory = !string.IsNullOrEmpty(dir) ? dir + Path.DirectorySeparatorChar : "";
             s.SaveToFilename = Path.GetFileNameWithoutExtension(outPath);
@@ -1164,10 +1168,25 @@ public sealed partial class EncodePageViewModel : ViewModelBase
             double bps = !s.IsLossless ? s.BitRate * 1000.0 / 8.0 : pcmBps * 0.62; // CBR(核心/LBR)可准确，无损按比例估算
             double estFinalBytes = totalSec > 0 ? totalSec * bps : 0;
 
+            // 输出目录必须存在（引擎不会创建目录，否则直接失败）
+            try { if (!string.IsNullOrEmpty(s.SaveToDirectory)) Directory.CreateDirectory(s.SaveToDirectory); }
+            catch (Exception ex) { await ShowInfoAsync("无法编码", "无法创建输出目录：" + ex.Message); return; }
+            // 提交【之前】删除上次遗留的日志：旧代码在提交之后才删，会把引擎快速写出的错误日志删掉，导致界面永远等不到结果
+            try { if (File.Exists(logPath)) File.Delete(logPath); } catch { }
+            // 记录输出文件原有状态：同名旧文件存在时，不把它的大小当成本次编码进度
+            DateTime outBaseline = DateTime.MinValue;
+            try { if (File.Exists(outputPath)) outBaseline = File.GetLastWriteTimeUtc(outputPath); } catch { }
+
             EncodeJob job;
             try
             {
                 job = AppServices.Queue.Submit(s, folderBased: false);
+            }
+            catch (EnginePathException pex)
+            {
+                Log("无法提交: " + pex.Message);
+                await ShowInfoAsync("路径无法被 DTS 引擎识别", pex.Message);
+                return;
             }
             catch (InvalidOperationException)
             {
@@ -1183,14 +1202,24 @@ public sealed partial class EncodePageViewModel : ViewModelBase
             job.OutputPath = outputPath; job.LogPath = logPath;   // 供"信息"按钮打开日志
             RefreshJobs();                       // 立即显示队列（不依赖异步订阅）
             Log($">> 开始编码 #{job.Handle}: {job.Name}（提交至引擎）");
+            if (AppServices.Queue.LastCommand is { } sent) Log("   引擎命令: " + sent);
             _aborted = false;  // 重置终止标志
-            _enginePercent = -1;  // 重置引擎上报百分比（等待新的 'D' 帧）
             _maxPct = 0;          // 重置单调递增锁
+            _monitoredJob = job;
             SetProgress(EncodeProgressState.Working, "② 编码中…");
             OverallProgress = 0;
-            _ = MonitorJobAsync(job, outputPath, logPath, estFinalBytes, totalSec, s);
+            _ = MonitorJobAsync(job, outputPath, logPath, outBaseline, estFinalBytes, s);
         }
         catch (Exception ex) { Log("提交失败: " + ex.Message); }
+    }
+
+    private static string? FirstNonEmpty(params string?[] items) =>
+        items.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+
+    private static string FirstLine(string text)
+    {
+        var line = text.Split('\n').Select(l => l.Trim()).FirstOrDefault(l => l.Length > 0) ?? text;
+        return line.Length > 160 ? line[..160] + "…" : line;
     }
 
     private static string Hms(double sec)
@@ -1200,132 +1229,207 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         return t.TotalHours >= 1 ? t.ToString(@"h\:mm\:ss") : t.ToString(@"mm\:ss");
     }
 
-    // 引擎编码中不回 socket 帧 → 轮询输出大小(按预估最终大小算百分比)与日志(完成/出错)
-    private async Task MonitorJobAsync(EncodeJob job, string outputPath, string logPath, double estFinalBytes, double totalSec, EncodeSettings settings)
+    /// <summary>引擎多久没有任何动静（无 socket 帧、输出与日志都不变）就提示"无响应"。</summary>
+    private static readonly TimeSpan StallWarnAfter = TimeSpan.FromMinutes(5);
+    /// <summary>无动静超过该时长则判定任务失败并停止监视（避免界面无限"编码中"）。</summary>
+    private static readonly TimeSpan StallFailAfter = TimeSpan.FromMinutes(45);
+
+    /// <summary>
+    /// 监视编码任务直至结束。结束判定（任一满足即结束）：
+    ///  1. 引擎 'X' 帧（JobQueueService 标记 job.IsFinal）——最权威，包括引擎报错；
+    ///  2. 引擎日志出现 "completed successfully"（成功）或 "Error"（失败）；
+    ///  3. 引擎连接断开 / DtsJobQueue 进程消失（失败）；
+    ///  4. 长时间无任何动静（失败，提示查看日志）。
+    /// 进度来源：引擎 'D' 帧 &gt; 输出文件大小/预估大小；两者都没有时显示不定进度条，
+    /// 不再用"已用时间÷音频时长"伪造百分比（旧逻辑会在超过音频时长后永远停在 99%）。
+    /// </summary>
+    private async Task MonitorJobAsync(EncodeJob job, string outputPath, string logPath,
+        DateTime outBaseline, double estFinalBytes, EncodeSettings settings)
     {
-        try { if (File.Exists(logPath)) File.Delete(logPath); } catch { }
         var startTime = DateTime.Now;
-        long lastSize = -1; int stableCount = 0;
+        var lastActivityUtc = DateTime.UtcNow;
+        long lastSize = -1, lastLogLen = -1;
+        int stableTicks = 0, engineGoneTicks = 0, tick = 0;
+        bool stallWarned = false;
+        string procName = "DtsJobQueue";
+
         while (true)
         {
             await Task.Delay(1000);
-            // 终止检查：Abort() 已置标志 → 立即退出循环，不再更新进度/耗时
+            tick++;
             if (_aborted)
             {
-                job.Percent = 0; job.Status = "已停止";
-                OverallProgress = 0;
-                SetProgress(EncodeProgressState.Idle, "✗ 已停止编码");
+                Post(() =>
+                {
+                    job.Percent = 0; job.Status = "已停止";
+                    IsProgressIndeterminate = false;
+                    OverallProgress = 0;
+                    SetProgress(EncodeProgressState.Idle, "✗ 已停止编码");
+                });
                 break;
             }
-            long size = 0;
-            try { if (File.Exists(outputPath)) size = new FileInfo(outputPath).Length; } catch { }
 
-            string? err = null; bool logReadable = false, logEmpty = false;
-            if (File.Exists(logPath))
+            // —— 输出文件（同名旧文件未被改写前不计入）——
+            long size = 0;
+            try
             {
-                try
+                if (File.Exists(outputPath) && File.GetLastWriteTimeUtc(outputPath) != outBaseline)
+                    size = new FileInfo(outputPath).Length;
+            }
+            catch { }
+
+            // —— 引擎日志 ——
+            string logTxt = ""; bool logExists = false;
+            try
+            {
+                if (File.Exists(logPath))
                 {
-                    using var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    using var sr = new StreamReader(fs);
-                    var txt = sr.ReadToEnd().Trim();
-                    logReadable = true; logEmpty = txt.Length == 0; err = txt;
+                    using var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                    using var sr = new StreamReader(fs, EngineText.Encoding);
+                    logTxt = sr.ReadToEnd().Trim();
+                    logExists = true;
                 }
-                catch { logReadable = false; }
+            }
+            catch { }
+
+            var nowUtc = DateTime.UtcNow;
+            if (size != lastSize) { lastSize = size; stableTicks = 0; lastActivityUtc = nowUtc; } else stableTicks++;
+            if (logTxt.Length != lastLogLen) { lastLogLen = logTxt.Length; lastActivityUtc = nowUtc; }
+            if (job.LastEngineFrameUtc > lastActivityUtc) lastActivityUtc = job.LastEngineFrameUtc;
+            bool engineFramesSeen = job.LastEngineFrameUtc != DateTime.MinValue;
+
+            // —— 引擎存活检查（每 3 秒）——
+            if (tick % 3 == 0 && !job.IsFinal)
+            {
+                bool alive = AppServices.Host?.IsConnectedSafe == true;
+                if (alive && OperatingSystem.IsWindows())
+                {
+                    try { alive = System.Diagnostics.Process.GetProcessesByName(procName).Length > 0; } catch { }
+                }
+                engineGoneTicks = alive ? 0 : engineGoneTicks + 1;
             }
 
-            if (size == lastSize) stableCount++; else { stableCount = 0; lastSize = size; }
-            // 按日志内容判定：含 "completed successfully"=成功；含 "Error"=失败；
-            // 其它非空内容(如 Saturation 警告/MD5)不算失败；空日志+输出停止增长=成功
-            string logTxt = err ?? "";
-            bool completedOk = logReadable && logTxt.IndexOf("completed successfully", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool hasError = logReadable && !completedOk && logTxt.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool finishedOk = completedOk || (logReadable && logEmpty && size > 0 && stableCount >= 2);
-            bool finishedErr = hasError;
+            // —— 结束判定 ——
+            bool logOk = logTxt.IndexOf("completed successfully", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool logErr = !logOk && logTxt.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0;
+            string? errorMsg = null;
+            bool ok = false, cancelled = false;
+
+            if (job.IsFinal)
+            {
+                if (job.ResultCode == 0) ok = true;
+                else if (job.ResultCode == 1) cancelled = true;
+                else errorMsg = FirstNonEmpty(job.ResultMessage, logTxt, $"引擎返回错误码 {job.ResultCode}");
+            }
+            else if (logOk) ok = true;
+            else if (logErr) errorMsg = logTxt;
+            else if (engineGoneTicks >= 2)
+                errorMsg = "DtsJobQueue 引擎已退出或连接断开，编码未完成。" + (logTxt.Length > 0 ? "\n" + logTxt : "");
+            else if (!engineFramesSeen && logExists && logTxt.Length == 0 && size > 0 && stableTicks >= 5)
+                ok = true; // 兼容不发 socket 帧的引擎：日志已生成且为空、输出停止增长
+            else if (nowUtc - lastActivityUtc > StallFailAfter)
+                errorMsg = $"引擎超过 {(int)StallFailAfter.TotalMinutes} 分钟没有任何响应（无进度、输出文件与日志均无变化），已停止监视。\n" +
+                           $"请查看日志 {logPath}；如 DtsJobQueue 仍在运行可点「终止编码」后重试。";
 
             double elapsed = (DateTime.Now - startTime).TotalSeconds;
-            int pct;
-            double eta;
-
-            // 优先用引擎上报的百分比（'D' 帧，最准确）
-            if (_enginePercent >= 0)
-            {
-                pct = _enginePercent;
-                eta = elapsed > 0 && pct > 0 && pct < 100 ? (elapsed / pct) * (100 - pct) : -1;
-            }
-            else if (estFinalBytes > 0 && size > 0)
-            {
-                // 用输出文件大小 / 预估输出大小计算进度（fallback）
-                double frac = Math.Min(0.99, size / estFinalBytes);
-                pct = (int)Math.Round(frac * 100);
-                eta = frac > 0.02 ? elapsed * (1 - frac) / frac : -1;
-            }
-            else if (totalSec > 0 && elapsed > 1)
-            {
-                // 兜底：用已用时间 / 总时长估算（基于线性处理速率假设）
-                double timeFrac = Math.Min(0.99, elapsed / totalSec);
-                pct = (int)Math.Round(timeFrac * 100);
-                eta = totalSec - elapsed;
-            }
-            else
-            {
-                pct = 0;
-                eta = -1;
-            }
-
-            // 单调递增：防止波动导致进度回退
-            if (pct < _maxPct) pct = _maxPct;
-            else _maxPct = pct;
-
             string mb = (size / 1024.0 / 1024.0).ToString("0.0");
             int warnCount = logTxt.Split('\n').Count(l => l.Contains("Saturation", StringComparison.OrdinalIgnoreCase));
             string md5 = logTxt.Split('\n').FirstOrDefault(l => l.TrimStart().StartsWith("MD5", StringComparison.OrdinalIgnoreCase))?.Trim() ?? "";
 
+            if (ok || cancelled || errorMsg != null)
+            {
+                Post(() =>
+                {
+                    IsProgressIndeterminate = false;
+                    if (errorMsg != null)
+                    {
+                        job.Status = "错误";
+                        OverallProgress = 0;
+                        SetProgress(EncodeProgressState.Error, "✗ 出错: " + FirstLine(errorMsg));
+                        Log("<< 编码出错: " + errorMsg);
+                    }
+                    else if (cancelled)
+                    {
+                        job.Status = "已取消";
+                        OverallProgress = 0;
+                        SetProgress(EncodeProgressState.Idle, "✗ 已停止编码");
+                        Log("<< 引擎报告任务已取消");
+                    }
+                    else
+                    {
+                        job.Percent = 100; job.Status = warnCount > 0 ? $"完成 ({warnCount} 警告)" : "完成";
+                        OverallProgress = 100;
+                        SetProgress(EncodeProgressState.Completed,
+                            $"✓ 编码完成 · 耗时 {Hms(elapsed)} · {mb} MB" + (warnCount > 0 ? $" · {warnCount} 个下混饱和警告" : ""));
+                        Log($"<< 编码完成: {outputPath}（耗时 {Hms(elapsed)}, {mb} MB）");
+                        if (!string.IsNullOrEmpty(md5)) Log("   " + md5);
+                        if (warnCount > 0) Log($"   {warnCount} 个下混饱和警告（不影响结果；如介意可调下混系数/启用饱和保护）");
+                    }
+                });
+                // 生成官方格式日志：在引擎输出前补上设置头（.dtshd_log.txt = 头 + 引擎输出）
+                if (ok)
+                {
+                    try
+                    {
+                        string engineLog = File.Exists(logPath) ? File.ReadAllText(logPath, EngineText.Encoding) : "";
+                        if (!engineLog.StartsWith("****"))
+                        {
+                            string header = EncodeLogWriter.BuildHeader(settings, AppServices.Settings.ToolDir);
+                            File.WriteAllText(logPath, header + engineLog);
+                        }
+                    }
+                    catch { }
+                }
+                break;
+            }
+
+            // —— 进度 ——
+            int? pct = null; double eta = -1; bool estimated = false;
+            if (job.EnginePercent >= 0)
+            {
+                pct = job.EnginePercent;
+                eta = elapsed > 0 && pct > 0 && pct < 100 ? elapsed / pct.Value * (100 - pct.Value) : -1;
+            }
+            else if (estFinalBytes > 0 && size > 0)
+            {
+                double frac = Math.Min(0.99, size / estFinalBytes);
+                pct = (int)Math.Round(frac * 100);
+                eta = frac > 0.02 && frac < 0.99 ? elapsed * (1 - frac) / frac : -1;
+                estimated = true;
+            }
+            if (pct is int p) { if (p < _maxPct) pct = _maxPct; else _maxPct = p; }
+
+            var idle = nowUtc - lastActivityUtc;
+            if (idle > StallWarnAfter && !stallWarned)
+            {
+                stallWarned = true;
+                Log($"!! 引擎已 {(int)idle.TotalMinutes} 分钟无响应（无进度帧，输出 {mb} MB 无变化）。日志: {logPath}");
+            }
+            string stall = idle > StallWarnAfter ? $" · ⚠ {(int)idle.TotalMinutes} 分钟无响应" : "";
+            string phase = job.EnginePercent >= 100 ? "② 校验 MD5…" : "② 编码中…";
+
             Post(() =>
             {
-                if (finishedErr)
+                if (pct is int v)
                 {
-                    job.Percent = 0; job.Status = "错误";
-                    OverallProgress = 0;
-                    SetProgress(EncodeProgressState.Error, "✗ 出错: " + err);
-                    Log("<< 编码出错: " + err);
-                }
-                else if (finishedOk)
-                {
-                    job.Percent = 100; job.Status = warnCount > 0 ? $"完成 ({warnCount} 警告)" : "完成";
-                    OverallProgress = 100;
-                    SetProgress(EncodeProgressState.Completed,
-                        $"✓ 编码完成 · 耗时 {Hms(elapsed)} · {mb} MB" + (warnCount > 0 ? $" · {warnCount} 个下混饱和警告" : ""));
-                    Log($"<< 编码完成: {outputPath}（耗时 {Hms(elapsed)}, {mb} MB）");
-                    if (!string.IsNullOrEmpty(md5)) Log("   " + md5);
-                    if (warnCount > 0) Log($"   {warnCount} 个下混饱和警告（不影响结果；如介意可调下混系数/启用饱和保护）");
+                    IsProgressIndeterminate = false;
+                    job.Percent = v;
+                    job.Status = v >= 100 ? "校验 MD5" : $"编码中 {v}%";
+                    OverallProgress = v;
+                    SetProgress(EncodeProgressState.Working,
+                        $"{phase} {(estimated ? "约 " : "")}{v}% · 已用 {Hms(elapsed)} · 剩余 {(eta >= 0 ? "~" + Hms(eta) : "--:--")} · {mb} MB{stall}");
                 }
                 else
                 {
-                    job.Percent = pct;
-                    job.Status = $"编码中 {pct}%";
-                    OverallProgress = pct;
+                    IsProgressIndeterminate = true;
+                    job.Status = "编码中";
                     SetProgress(EncodeProgressState.Working,
-                        $"② 编码中… {pct}% · 已用 {Hms(elapsed)} · 剩余 ~{Hms(eta)} · {mb} MB");
+                        $"{phase} 已用 {Hms(elapsed)} · 等待引擎进度 · {mb} MB{stall}");
                 }
             });
-
-            if (finishedOk || finishedErr)
-            {
-                // 生成官方格式日志：在引擎输出前补上设置头（.dtshd_log.txt = 头 + 引擎输出）
-                try
-                {
-                    string engineLog = File.Exists(logPath) ? File.ReadAllText(logPath) : "";
-                    if (!engineLog.StartsWith("****"))
-                    {
-                        string header = EncodeLogWriter.BuildHeader(settings, AppServices.Settings.ToolDir);
-                        File.WriteAllText(logPath, header + engineLog);
-                    }
-                }
-                catch { }
-                break;
-            }
-            if (elapsed > 12 * 3600) break;
         }
+
+        if (ReferenceEquals(_monitoredJob, job)) _monitoredJob = null;
 
         // 清理声道重排临时文件（编码完成/出错/终止后都执行）
         if (_remapTmpPath != null && File.Exists(_remapTmpPath))
@@ -1563,6 +1667,8 @@ public sealed partial class EncodePageViewModel : ViewModelBase
         if (AppServices.Queue != null) { AppServices.Queue.Changed -= RefreshJobs; AppServices.Queue.Changed += RefreshJobs; }
     });
 
+    private int _lastLoggedPct = -1;
+
     private void OnEngineResponse(DtsResponse r) => Post(() =>
     {
         switch (r.Kind)
@@ -1571,27 +1677,26 @@ public sealed partial class EncodePageViewModel : ViewModelBase
                 Log($"<< 引擎授权码: {r.LicenseCode ?? "(空)"}（{(AppServices.Host?.IsAuthorized == true ? "已授权" : "未授权")}）");
                 UpdateEngineStatus();
                 break;
+            // 进度栏/任务状态由 MonitorJobAsync 统一刷新（依据 JobQueueService 维护的 job 状态），
+            // 这里只记录日志，避免两处同时改写进度文本造成"完成后又被改回编码中"。
             case DtsResponseKind.JobStarted:
-                Log($"<< [{r.Raw}] job={r.JobHandle} 编码开始");
-                if (_aborted) break;  // 已终止：忽略引擎延迟消息
-                OverallProgress = 0; SetProgress(EncodeProgressState.Working, "② 开始编码"); break;
+                Log($"<< [{r.Raw}] engineJob={r.JobHandle} 编码开始 {r.Text}");
+                break;
             case DtsResponseKind.Pbr:
-                Log($"<< [{r.Raw}] job={r.JobHandle} PBR 分析");
-                if (_aborted) break;
-                SetProgress(EncodeProgressState.Working, "② PBR 分析"); break;
+                Log($"<< [{r.Raw}] engineJob={r.JobHandle} PBR 分析");
+                break;
             case DtsResponseKind.Progress:
-                if (_aborted) break;  // 已终止：忽略进度消息，避免覆盖"已停止编码"
-                if (r.Percent >= 0)
+                if (r.Percent >= 0 && r.Percent % 10 == 0 && r.Percent != _lastLoggedPct)
                 {
-                    _enginePercent = r.Percent;
-                    if (r.Percent > _maxPct) _maxPct = r.Percent;
+                    _lastLoggedPct = r.Percent;
+                    Log($"<< [{r.Raw}] engineJob={r.JobHandle} {(r.Percent == 100 ? "100% · 校验 MD5" : r.Percent + "%")}");
                 }
-                SetProgress(EncodeProgressState.Working, r.Percent == 100 ? "② 校验 MD5" : $"② 编码中… {Math.Max(r.Percent, 0)}%");
                 break;
             case DtsResponseKind.Finished:
-                if (r.ResultCode == 0) { OverallProgress = 100; SetProgress(EncodeProgressState.Completed, "✓ 编码完成"); Log($"<< job={r.JobHandle} 编码完成"); }
-                else if (r.ResultCode == 1) { SetProgress(EncodeProgressState.Idle, "✗ 已停止编码"); Log($"<< job={r.JobHandle} 已终止"); }
-                else { SetProgress(EncodeProgressState.Error, "✗ 出错: " + r.Text); Log($"<< job={r.JobHandle} 出错: {r.Text}"); }
+                _lastLoggedPct = -1;
+                if (r.ResultCode == 0) Log($"<< engineJob={r.JobHandle} 引擎报告编码完成");
+                else if (r.ResultCode == 1) Log($"<< engineJob={r.JobHandle} 引擎报告已终止");
+                else Log($"<< engineJob={r.JobHandle} 引擎报告出错(rc={r.ResultCode}): {r.Text}");
                 break;
             default:
                 Log($"<< [{r.Raw}] job={r.JobHandle} pct={r.Percent} rc={r.ResultCode} {r.Text}");

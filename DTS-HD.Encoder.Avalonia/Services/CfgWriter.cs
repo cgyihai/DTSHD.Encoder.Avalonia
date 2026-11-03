@@ -48,7 +48,8 @@ public sealed class CfgWriter
     public void WriteToFile(string path)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        File.WriteAllText(path, Build(), new UTF8Encoding(false));
+        // 引擎按系统 ANSI 代码页读取 .cfg（与官方 Java GUI 一致），不能写 UTF-8
+        File.WriteAllBytes(path, EngineText.GetBytes(Build()));
     }
 
     // =========================================================

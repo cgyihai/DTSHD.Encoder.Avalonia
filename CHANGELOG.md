@@ -5,6 +5,31 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.1.1] - 2026-11-03
+
+修复**编码一直卡在「编码中… 99%」**（引擎实际已出错或已退出，界面却无限等待）。
+Fixes encoding appearing **stuck at "Encoding… 99%"** while the engine had actually failed or exited.
+
+### 🐛 修复 / Fixed
+- **99% 是估算值**：引擎未上报进度且无输出文件时，旧版按"已用时间 ÷ 音频时长"估算并封顶 99%，超过音频时长后永远停在 99%。
+  现改为不定进度条 +「等待引擎进度」，只显示引擎真实进度或按输出文件大小的估算（标注"约"）。
+  *The 99% was a time-based estimate capped at 99%; it is gone — an indeterminate bar is shown until the engine reports progress.*
+- **引擎结束/出错消息被覆盖**：引擎发来的完成/错误（'X' 帧）只写日志，进度轮询又把状态改回"编码中"。现以引擎结果为准立即结束并显示错误原因。
+  *The engine's finished/error frame is now honoured instead of being overwritten by the progress poller.*
+- **中文路径导致引擎打不开文件**：命令与 .cfg 改用系统 ANSI 代码页（与官方 GUI 一致，原为 UTF-8）；含中文的路径优先转换为 8.3 短路径；
+  .cfg 不再因中文用户名的 %TEMP% 而无法读取；仍无法表示时弹窗说明具体路径，而不是静默失败。StreamTools 同样处理。
+  *Commands and .cfg are sent in the system ANSI code page; non-ASCII paths are converted to 8.3 short paths; unrepresentable paths are reported.*
+- **任务句柄不一致**：引擎自行分配任务句柄，旧版假设与本地编号相同；现按引擎返回的句柄绑定任务，进度/终止/队列操作都指向正确任务。
+  *Engine job handles are now mapped to local jobs, so progress and cancel target the right job.*
+- **引擎崩溃/退出无感知**：socket 断开或 DtsJobQueue 进程消失时立即标记失败；长时间无任何动静（5 分钟提示、45 分钟判定失败）。
+  *Engine disconnect/exit is detected; long stalls are reported.*
+- 输出路径统一转为绝对路径并自动创建输出目录；上次遗留的日志改为在提交任务**之前**删除（旧版提交后才删，可能删掉引擎刚写的错误日志）。
+  *Absolute output path, output folder auto-created, stale log removed before (not after) submitting.*
+- 日志记录实际发送给引擎的命令，便于排查。
+  *The exact engine command is logged.*
+
+---
+
 ## [1.1.0] - 2026-11-03
 
 新增**音轨自动识别导入**与**鼠标悬浮提示**，并接入 GitHub Actions 自动编译 / 发布。
@@ -102,6 +127,7 @@ Focus on **cross-machine compatibility**, **resolution/DPI adaptivity**, **encod
 - 首个公开版本：DTS-HD Master Audio 编码 GUI（音频编码 / 比特流元数据 / 下混 / 队列 / StreamTools）。
   *Initial public release: DTS-HD Master Audio encoding GUI.*
 
+[1.1.1]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.1
 [1.1.0]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.0
 [1.0.2]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
 [1.0.1]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
