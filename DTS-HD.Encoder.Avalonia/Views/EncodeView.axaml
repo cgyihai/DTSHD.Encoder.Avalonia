@@ -39,10 +39,10 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
                     <!-- 改用普通 Button：HyperlinkButton 默认带下划线且字体发虚，
                          Button 视觉清晰，与 FluentUI 按钮风格一致 -->
-                    <Button Content="{DynamicResource Lang.Encode.ResetDefaults}" Command="{Binding ResetDefaultsCommand}"/>
-                    <Button Content="{DynamicResource Lang.Encode.LoadSettings}" Command="{Binding LoadSettingsCommand}"/>
-                    <Button Content="{DynamicResource Lang.Encode.SaveSettings}" Command="{Binding SaveSettingsCommand}"/>
-                    <Button Content="{DynamicResource Lang.Encode.SaveSettingsAs}" Command="{Binding SaveSettingsAsCommand}"/>
+                    <Button Content="{DynamicResource Lang.Encode.ResetDefaults}" Command="{Binding ResetDefaultsCommand}" ToolTip.Tip="{DynamicResource Tip.ResetDefaults}"/>
+                    <Button Content="{DynamicResource Lang.Encode.LoadSettings}" Command="{Binding LoadSettingsCommand}" ToolTip.Tip="{DynamicResource Tip.LoadSettings}"/>
+                    <Button Content="{DynamicResource Lang.Encode.SaveSettings}" Command="{Binding SaveSettingsCommand}" ToolTip.Tip="{DynamicResource Tip.SaveSettings}"/>
+                    <Button Content="{DynamicResource Lang.Encode.SaveSettingsAs}" Command="{Binding SaveSettingsAsCommand}" ToolTip.Tip="{DynamicResource Tip.SaveSettingsAs}"/>
                 </StackPanel>
             </Grid>
 
@@ -67,8 +67,9 @@
                                 <TextBlock Text="{DynamicResource Lang.Encode.SectionInputOutput}" FontWeight="SemiBold" FontSize="16"/>
                                 <TextBlock Text="{DynamicResource Lang.T0}" Opacity="0.7" TextWrapping="Wrap"/>
                                 <WrapPanel Orientation="Horizontal" ItemSpacing="12" LineSpacing="8">
-                                    <RadioButton Content="{DynamicResource Lang.T1}" GroupName="inputmode" IsChecked="{Binding IsSingleFileMode, Mode=TwoWay}"/>
-                                    <RadioButton Content="{DynamicResource Lang.T2}" GroupName="inputmode" IsChecked="{Binding !IsSingleFileMode}"/>
+                                    <RadioButton Content="{DynamicResource Lang.T1}" GroupName="inputmode" IsChecked="{Binding IsSingleFileMode, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SingleMode}"/>
+                                    <RadioButton Content="{DynamicResource Lang.T2}" GroupName="inputmode" IsChecked="{Binding !IsSingleFileMode}" ToolTip.Tip="{DynamicResource Tip.SplitMode}"/>
+                                    <CheckBox Content="{DynamicResource Lang.Encode.AutoDetectLayout}" IsChecked="{Binding AutoDetectLayout, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.AutoDetectLayout}"/>
                                 </WrapPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                                     <TextBlock Text="{DynamicResource Lang.T3}" VerticalAlignment="Center" Width="80"/>
@@ -76,13 +77,13 @@
                                          窄窗口时下拉框宽度自适应收缩，配合外层 ScrollViewer 兜底滚动。 -->
                                     <ComboBox HorizontalAlignment="Stretch"
                                               ItemsSource="{Binding ChannelLayoutDisplays}"
-                                              SelectedItem="{Binding SelectedChannelLayoutDisplay, Mode=TwoWay}"/>
-                                    <Button Content="{DynamicResource Lang.T4}" Command="{Binding ClearAllCommand}"/>
+                                              SelectedItem="{Binding SelectedChannelLayoutDisplay, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Layout}"/>
+                                    <Button Content="{DynamicResource Lang.T4}" Command="{Binding ClearAllCommand}" ToolTip.Tip="{DynamicResource Tip.ClearAll}"/>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Top">
                                 <TextBlock Text="{DynamicResource Lang.T5}" FontSize="12" Opacity="0.7" HorizontalAlignment="Center"/>
-                                <ctl:SpeakerLayout x:Name="SpeakerHost"/>
+                                <ctl:SpeakerLayout x:Name="SpeakerHost" ToolTip.Tip="{DynamicResource Tip.SpeakerLayout}"/>
                             </StackPanel>
                         </Grid>
 
@@ -103,7 +104,7 @@
                         <Grid ColumnDefinitions="40,*,48,52,72,100,72" ColumnSpacing="6" IsVisible="{Binding IsSingleFilePanelVisible}">
                             <!-- “输入”标签：与下方“输出”标签同列宽(40px)、同样式，左对齐一致 -->
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T62}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T11}" Text="{Binding SingleFilePath, Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T11}" Text="{Binding SingleFilePath, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SingleFile}"/>
                             <Border Grid.Column="2" CornerRadius="6" BorderThickness="1"
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
@@ -132,7 +133,7 @@
                                     ToolTip.Tip="{DynamicResource Lang.T15}">
                                 <TextBlock Text="{Binding SingleDurationInfo}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSingleCommand}" HorizontalAlignment="Stretch"/>
+                            <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseSingleCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}" HorizontalAlignment="Stretch"/>
                         </Grid>
 
                         <!-- 分轨声道输入行表头（列宽与下方 DataTemplate 行一致：32,*,48,52,72,100,72）
@@ -158,8 +159,24 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="vm:ChannelRowViewModel">
                                     <Grid ColumnDefinitions="32,*,48,52,72,100,72" ColumnSpacing="6">
-                                        <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center"/>
-                                        <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T17}" Text="{Binding FilePath, Mode=TwoWay}"/>
+                                        <!-- 声道标签：悬浮显示该声道可被自动识别的文件名写法 -->
+                                        <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center" Background="Transparent">
+                                            <ToolTip.Tip>
+                                                <StackPanel Spacing="4" MaxWidth="420">
+                                                    <TextBlock Text="{DynamicResource Tip.ChannelAliases}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding AliasTip}" TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </ToolTip.Tip>
+                                        </TextBlock>
+                                        <TextBox Grid.Column="1" Watermark="{DynamicResource Lang.T17}" Text="{Binding FilePath, Mode=TwoWay}">
+                                            <ToolTip.Tip>
+                                                <StackPanel Spacing="4" MaxWidth="520">
+                                                    <TextBlock Text="{DynamicResource Tip.ChannelFile}" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="{Binding FilePath}" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                               IsVisible="{Binding FilePath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                                </StackPanel>
+                                            </ToolTip.Tip>
+                                        </TextBox>
                                         <!-- 声道/位宽/采样率/时长：圆角矩形框（移植自 WinUI3 ValueBox 样式）。
                                              用主题资源 ControlFillColorDefaultBrush + ControlStrokeColorDefaultBrush，
                                              浅色/深色主题自动切换。 -->
@@ -187,7 +204,7 @@
                                                 Padding="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Duration}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-                                        <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="6" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseChannel}" HorizontalAlignment="Stretch"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -196,8 +213,8 @@
                         <!-- 输出行 -->
                         <Grid ColumnDefinitions="40,*,84" ColumnSpacing="8" Margin="0,8,0,0">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T18}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Watermark="D:\out\title.dtshd" Text="{Binding OutputPath, Mode=TwoWay}"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseOutputCommand}" HorizontalAlignment="Stretch"/>
+                            <TextBox Grid.Column="1" Watermark="D:\out\title.dtshd" Text="{Binding OutputPath, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Output}"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseOutputCommand}" ToolTip.Tip="{DynamicResource Tip.BrowseSave}" HorizontalAlignment="Stretch"/>
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -213,37 +230,37 @@
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T19}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding DestFormats}"
-                                              SelectedIndex="{Binding SelectedDestFormatIndex, Mode=TwoWay}"
+                                              SelectedIndex="{Binding SelectedDestFormatIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.DestFormat}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T20}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding StreamTypes}"
-                                              SelectedIndex="{Binding SelectedStreamTypeIndex, Mode=TwoWay}"
+                                              SelectedIndex="{Binding SelectedStreamTypeIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.StreamType}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T21}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding EncodeTypeOptions}"
-                                              SelectedItem="{Binding SelectedEncodeType, Mode=TwoWay}"
+                                              SelectedItem="{Binding SelectedEncodeType, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EncodeType}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T22}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding SampleRateOptions}"
-                                              SelectedItem="{Binding SelectedSampleRate, Mode=TwoWay}"
+                                              SelectedItem="{Binding SelectedSampleRate, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SampleRate}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T8}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding BitWidthOptions}"
-                                              SelectedItem="{Binding SelectedBitWidth, Mode=TwoWay}"
+                                              SelectedItem="{Binding SelectedBitWidth, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.BitWidth}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T23}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding CoreBitRateOptions}"
-                                              SelectedItem="{Binding CoreBitRateText, Mode=TwoWay}"
+                                              SelectedItem="{Binding CoreBitRateText, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.CoreBitRate}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                             </Grid>
@@ -251,13 +268,13 @@
                                 <TextBlock Text="{DynamicResource Lang.T24}" VerticalAlignment="Center"/>
                                 <ComboBox MinWidth="170"
                                           ItemsSource="{Binding DialogNormOptions}"
-                                          SelectedIndex="{Binding SelectedDialogNormIndex, Mode=TwoWay}"/>
+                                          SelectedIndex="{Binding SelectedDialogNormIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.DialNorm}"/>
                             </StackPanel>
                             <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="6">
-                                <ToggleButton Content="96/24 Core" IsChecked="{Binding Use9624, Mode=TwoWay}"/>
-                                <ToggleButton Content="Rear Ch. -3dB" IsChecked="{Binding AttenuateRearCh, Mode=TwoWay}"/>
-                                <ToggleButton Content="ES Phase Shift" IsChecked="{Binding EsPhaseShift, Mode=TwoWay}"/>
-                                <ToggleButton Content="ES Pre-Mixed" IsChecked="{Binding IsPremixed, Mode=TwoWay}"/>
+                                <ToggleButton Content="96/24 Core" IsChecked="{Binding Use9624, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Core9624}"/>
+                                <ToggleButton Content="Rear Ch. -3dB" IsChecked="{Binding AttenuateRearCh, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.RearAtten}"/>
+                                <ToggleButton Content="ES Phase Shift" IsChecked="{Binding EsPhaseShift, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EsPhase}"/>
+                                <ToggleButton Content="ES Pre-Mixed" IsChecked="{Binding IsPremixed, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EsPremixed}"/>
                             </WrapPanel>
                         </StackPanel>
                     </Border>
@@ -270,32 +287,32 @@
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T25}" Opacity="0.7" FontSize="12"/>
                                     <ComboBox ItemsSource="{Binding FrameRateOptions}"
-                                              SelectedItem="{Binding SelectedFrameRate, Mode=TwoWay}"
+                                              SelectedItem="{Binding SelectedFrameRate, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.FrameRate}"
                                               HorizontalAlignment="Stretch"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T26}" Opacity="0.7" FontSize="12"/>
-                                    <TextBox Text="{Binding StartTime, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding StartTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.StartTime}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="2" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T27}" Opacity="0.7" FontSize="12"/>
-                                    <TextBox Text="{Binding EndTime, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding EndTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EndTime}"/>
                                 </StackPanel>
                                 <CheckBox Grid.Row="1" Grid.Column="0" Content="{DynamicResource Lang.T28}"
-                                          IsChecked="{Binding EncodeEntireFile, Mode=TwoWay}" VerticalAlignment="Bottom"/>
+                                          IsChecked="{Binding EncodeEntireFile, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EncodeEntire}" VerticalAlignment="Bottom"/>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T29}" Opacity="0.7" FontSize="12"/>
-                                    <TextBox Text="{Binding EncodeFromTime, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding EncodeFromTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EncodeFrom}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="2" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T30}" Opacity="0.7" FontSize="12"/>
-                                    <TextBox Text="{Binding EncodeToTime, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding EncodeToTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EncodeTo}"/>
                                 </StackPanel>
                                 <CheckBox Grid.Row="2" Grid.Column="0" Content="{DynamicResource Lang.T31}"
-                                          IsChecked="{Binding UseReferenceTime, Mode=TwoWay}" VerticalAlignment="Center"/>
+                                          IsChecked="{Binding UseReferenceTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.RefTc}" VerticalAlignment="Center"/>
                                 <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
                                     <TextBlock Text="{DynamicResource Lang.T32}" Opacity="0.7" FontSize="12"/>
-                                    <TextBox Text="{Binding ReferenceTime, Mode=TwoWay}"/>
+                                    <TextBox Text="{Binding ReferenceTime, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Timecode}"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
@@ -318,7 +335,7 @@
                             <!-- 主音频衰减 -->
                             <StackPanel Spacing="6">
                                 <TextBlock Text="{DynamicResource Lang.T33}" FontWeight="SemiBold"/>
-                                <CheckBox Content="{DynamicResource Lang.T34}" IsChecked="{Binding UsePrimaryAudioAttenuation, Mode=TwoWay}"/>
+                                <CheckBox Content="{DynamicResource Lang.T34}" IsChecked="{Binding UsePrimaryAudioAttenuation, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.PrimaryAtten}"/>
                                 <StackPanel Orientation="Horizontal" Spacing="10">
                                     <ctl:DbFader Caption="Primary" Minimum="-60" Maximum="40" DbValue="{Binding PrimaryDb, Mode=TwoWay}"/>
                                     <StackPanel Spacing="6" VerticalAlignment="Center">
@@ -355,7 +372,7 @@
                     <StackPanel Spacing="8">
                         <!-- 第 1 行：启用 AAF + 衰减方式单选（横排） -->
                         <StackPanel Orientation="Horizontal" Spacing="16">
-                            <CheckBox Content="{DynamicResource Lang.T36}" IsChecked="{Binding EmbedAaf, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <CheckBox Content="{DynamicResource Lang.T36}" IsChecked="{Binding EmbedAaf, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EmbedAaf}" VerticalAlignment="Center"/>
                             <TextBlock Text="{DynamicResource Lang.T37}" VerticalAlignment="Center" Opacity="0.7"/>
                             <RadioButton Content="Unison" GroupName="aafatt" IsChecked="{Binding !IsAafIndependent}" VerticalAlignment="Center"/>
                             <RadioButton Content="Independent" GroupName="aafatt" IsChecked="{Binding IsAafIndependent, Mode=TwoWay}" VerticalAlignment="Center"/>
@@ -363,8 +380,8 @@
                         <!-- 第 2 行：AAF 文件路径 + 浏览（限制 TextBox MaxWidth 避免过宽） -->
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                             <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T38}" VerticalAlignment="Center"/>
-                            <TextBox Grid.Column="1" Text="{Binding AafFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
-                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseAafCommand}"/>
+                            <TextBox Grid.Column="1" Text="{Binding AafFilePath, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.AafFile}" HorizontalAlignment="Stretch"/>
+                            <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseAafCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}"/>
                         </Grid>
                         <!-- 第 3 行：7 个衰减值横排一行（Unison + 6 声道），不再竖排
                              每项 = 标签(40px) + 输入框(56px) + Spacing(10) ≈ 106px × 7 = ~740px -->
@@ -379,7 +396,7 @@
                         </StackPanel>
                         <!-- 第 4 行：声像开关 + 5 个声像值横排一行 -->
                         <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="6">
-                            <CheckBox Content="{DynamicResource Lang.T39}" IsChecked="{Binding AafPanningEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
+                            <CheckBox Content="{DynamicResource Lang.T39}" IsChecked="{Binding AafPanningEnabled, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Panning}" VerticalAlignment="Center"/>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="LF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanLF, Mode=TwoWay}"/></StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="RF" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanRF, Mode=TwoWay}"/></StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="4"><TextBlock Text="C" VerticalAlignment="Center" Width="20"/><TextBox Classes="Narrow" Width="56" Text="{Binding PanC, Mode=TwoWay}"/></StackPanel>
@@ -390,26 +407,26 @@
 
                     <!-- 单一剪辑 + CSV 分支点 + CSV 文件路径：全部横排一行 -->
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <CheckBox Content="{DynamicResource Lang.T40}" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}" VerticalAlignment="Center"/>
-                        <CheckBox Content="{DynamicResource Lang.T41}" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T40}" IsChecked="{Binding SeamlessSingleClip, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.SingleClip}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T41}" IsChecked="{Binding SeamlessCsvBranchPoints, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.CsvBranch}" VerticalAlignment="Center"/>
                     </StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <TextBlock Grid.Column="0" Text="{DynamicResource Lang.T42}" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CsvFilePath, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
-                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCsvCommand}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CsvFilePath, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.CsvFile}" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="2" Content="{DynamicResource Lang.Common.Browse}" Command="{Binding BrowseCsvCommand}" ToolTip.Tip="{DynamicResource Tip.Browse}"/>
                     </Grid>
 
                     <!-- Express + 7.1 Wide：横排一行 -->
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <CheckBox Content="{DynamicResource Lang.T43}" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}" VerticalAlignment="Center"/>
-                        <CheckBox Content="{DynamicResource Lang.T44}" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T43}" IsChecked="{Binding UseExpressDialogMode, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.ExpressDialog}" VerticalAlignment="Center"/>
+                        <CheckBox Content="{DynamicResource Lang.T44}" IsChecked="{Binding UseWideRemapping, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.WideRemap}" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <!-- 程序信息 -->
                     <StackPanel Spacing="4">
                         <TextBlock Text="{DynamicResource Lang.T45}" Opacity="0.7" FontSize="12"/>
                         <TextBox Watermark="{DynamicResource Lang.T46}" AcceptsReturn="True" Height="70" TextWrapping="Wrap"
-                                 Text="{Binding ProgramInfo, Mode=TwoWay}"/>
+                                 Text="{Binding ProgramInfo, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.ProgramInfo}"/>
                     </StackPanel>
                 </StackPanel>
             </Expander>
@@ -426,9 +443,9 @@
                     <StackPanel Spacing="8">
                         <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
                             <TextBlock Text="{DynamicResource Lang.T47}" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use51Downmix, Mode=TwoWay}"/>
-                            <CheckBox Content="{DynamicResource Lang.T49}" IsChecked="{Binding UseCurrentChannels, Mode=TwoWay}"/>
-                            <CheckBox Content="{DynamicResource Lang.T50}" IsChecked="{Binding UseLegacyMatrix, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use51Downmix, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Downmix51}"/>
+                            <CheckBox Content="{DynamicResource Lang.T49}" IsChecked="{Binding UseCurrentChannels, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.KeepCurrent}"/>
+                            <CheckBox Content="{DynamicResource Lang.T50}" IsChecked="{Binding UseLegacyMatrix, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.LegacyMatrix}"/>
                         </WrapPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="0,0,0,16">
                             <StackPanel Orientation="Horizontal" Spacing="14">
@@ -492,11 +509,11 @@
                     <StackPanel Spacing="8">
                         <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="8">
                             <TextBlock Text="{DynamicResource Lang.T51}" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use20Downmix, Mode=TwoWay}"/>
-                            <RadioButton Content="Lo/Ro" GroupName="dmx20mode" IsChecked="{Binding !Is2ChDmixLtRt}"/>
-                            <RadioButton Content="Lt/Rt" GroupName="dmx20mode" IsChecked="{Binding Is2ChDmixLtRt, Mode=TwoWay}"/>
-                            <CheckBox Content="{DynamicResource Lang.T52}" IsChecked="{Binding DownmixSaturationCheck, Mode=TwoWay}"/>
-                            <CheckBox Content="{DynamicResource Lang.T53}" IsChecked="{Binding IsEmbeddedDownmix, Mode=TwoWay}"/>
+                            <CheckBox Content="{DynamicResource Lang.T48}" IsChecked="{Binding Use20Downmix, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Downmix20}"/>
+                            <RadioButton Content="Lo/Ro" GroupName="dmx20mode" IsChecked="{Binding !Is2ChDmixLtRt}" ToolTip.Tip="{DynamicResource Tip.LoRo}"/>
+                            <RadioButton Content="Lt/Rt" GroupName="dmx20mode" IsChecked="{Binding Is2ChDmixLtRt, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.LtRt}"/>
+                            <CheckBox Content="{DynamicResource Lang.T52}" IsChecked="{Binding DownmixSaturationCheck, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Saturation}"/>
+                            <CheckBox Content="{DynamicResource Lang.T53}" IsChecked="{Binding IsEmbeddedDownmix, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.EmbeddedDownmix}"/>
                         </WrapPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Padding="0,0,0,16">
                             <StackPanel Orientation="Horizontal" Spacing="18">
@@ -562,16 +579,16 @@
                          WrapPanel：窄窗口下按钮自动换行，避免挤压重叠。 -->
                     <WrapPanel Orientation="Horizontal" ItemSpacing="10" LineSpacing="8">
                         <!-- 开始编码：蓝色背景（固定蓝色，hover/pressed 不丢失背景色，仅做亮度反馈） -->
-                        <Button Content="{DynamicResource Lang.Encode.Start}" Classes="encode-start" Command="{Binding EncodeCommand}"/>
+                        <Button Content="{DynamicResource Lang.Encode.Start}" Classes="encode-start" Command="{Binding EncodeCommand}" ToolTip.Tip="{DynamicResource Tip.Start}"/>
                         <!-- 终止编码：红色背景（固定红色，hover/pressed 不丢失背景色，仅做亮度反馈） -->
-                        <Button Content="{DynamicResource Lang.Encode.Stop}" Classes="encode-stop" Command="{Binding AbortCommand}"/>
+                        <Button Content="{DynamicResource Lang.Encode.Stop}" Classes="encode-stop" Command="{Binding AbortCommand}" ToolTip.Tip="{DynamicResource Tip.Stop}"/>
                         <!-- 打开编码队列弹窗 -->
-                        <Button Content="{DynamicResource Lang.Encode.OpenQueue}" Click="OnOpenQueueClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.OpenQueue}" Click="OnOpenQueueClick" ToolTip.Tip="{DynamicResource Tip.OpenQueue}"/>
                         <!-- 预览按钮组：左侧加 margin 视觉分隔，点击触发 TextPreviewWindow 弹窗 -->
-                        <Button Content="{DynamicResource Lang.Encode.PreviewCfg}" Click="OnPreviewCfgClick" Margin="16,0,0,0"/>
-                        <Button Content="{DynamicResource Lang.Encode.PreviewCmd}" Click="OnPreviewCommandClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.PreviewCfg}" Click="OnPreviewCfgClick" ToolTip.Tip="{DynamicResource Tip.PreviewCfg}" Margin="16,0,0,0"/>
+                        <Button Content="{DynamicResource Lang.Encode.PreviewCmd}" Click="OnPreviewCommandClick" ToolTip.Tip="{DynamicResource Tip.PreviewCmd}"/>
                         <!-- 查看日志：点击触发弹窗，避免占用主界面空间 -->
-                        <Button Content="{DynamicResource Lang.Encode.ViewLog}" Click="OnShowLogClick"/>
+                        <Button Content="{DynamicResource Lang.Encode.ViewLog}" Click="OnShowLogClick" ToolTip.Tip="{DynamicResource Tip.ViewLog}"/>
                     </WrapPanel>
 
                     <!-- 总进度条 -->

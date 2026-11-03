@@ -1,0 +1,124 @@
+# 自动编译 DTS-HD.Encoder.Avalonia（Windows x64 单文件自包含 exe）
+#
+# - 任意分支 push / Pull Request / 手动触发：编译并上传构建产物（Actions → 本次运行 → Artifacts 下载）
+# - 推送到 main，或推送 v* 标签：额外创建 GitHub Release（标签 = v + csproj <Version>），
+#   发布说明取自 CHANGELOG.md 对应版本段落；同版本 Release 已存在时跳过，不会重复发布。
+#
+# 注意：仓库与发布包均不包含 DTS 官方工具链（DTS-HD_Tool），用户需自行放到 exe 同级目录。
+name: Build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PROJECT: DTS-HD.Encoder.Avalonia/DTS-HD.Encoder.Avalonia.csproj
+  # 项目以 ProjectReference 引用 Avalonia-Fluent-UI 2.0.0 源码（不随仓库提交），CI 中固定到该版本提交
+  FLUENT_UI_REPO: https://github.com/HiyorinI/AvaloniaFluentUI.git
+  FLUENT_UI_REF: 2b045f7d747bb375c4a6ceba53e4dfc3678f4002   # tag V2.0.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch Avalonia-Fluent-UI 2.0.0 source
+        shell: bash
+        run: |
+          git init -q Avalonia-Fluent-UI-2.0.0
+          cd Avalonia-Fluent-UI-2.0.0
+          git remote add origin "$FLUENT_UI_REPO"
+          git fetch -q --depth 1 origin "$FLUENT_UI_REF"
+          git checkout -q FETCH_HEAD
+          # 上游 nuget.config 含 Avalonia nightly 源，CI 只需 nuget.org，避免外部源不可用导致还原失败
+          cat > nuget.config <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <clear />
+              <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+          </configuration>
+          EOF
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Read version
+        id: ver
+        shell: bash
+        run: |
+          VERSION=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' "$PROJECT" | head -1)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
+
+      - name: Publish (win-x64, single file, self-contained)
+        run: >
+          dotnet publish ${{ env.PROJECT }} -c Release -r win-x64
+          --self-contained true -p:PublishSingleFile=true
+          -o publish
+
+      - name: Package
+        id: pkg
+        shell: bash
+        run: |
+          NAME="DTS-HD.Encoder.Avalonia-v${{ steps.ver.outputs.version }}-win-x64"
+          mkdir -p "dist/$NAME"
+          cp publish/DTS-HD.Encoder.Avalonia.exe "dist/$NAME/"
+          cp README.md CHANGELOG.md LICENSE "dist/$NAME/"
+          (cd dist && 7z a -tzip "$NAME.zip" "$NAME" > /dev/null)
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          ls -la dist
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.pkg.outputs.name }}
+          path: dist/${{ steps.pkg.outputs.name }}/
+
+      - name: Extract release notes from CHANGELOG
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        shell: bash
+        run: |
+          awk -v v="${{ steps.ver.outputs.version }}" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on && /^---$/ { exit }
+            on { print }
+          ' CHANGELOG.md > release-notes.md
+          [ -s release-notes.md ] || echo "DTS-HD.Encoder.Avalonia v${{ steps.ver.outputs.version }}" > release-notes.md
+          cat release-notes.md
+
+      - name: Check whether the release already exists
+        id: exists
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v${{ steps.ver.outputs.version }}" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${{ steps.ver.outputs.version }} already exists — skipping."
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.exists.outputs.found == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: v${{ steps.ver.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          body_path: release-notes.md
+          files: dist/${{ steps.pkg.outputs.name }}.zip

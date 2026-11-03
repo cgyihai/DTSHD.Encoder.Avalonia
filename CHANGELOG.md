@@ -5,6 +5,45 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.1.0] - 2026-11-03
+
+新增**音轨自动识别导入**与**鼠标悬浮提示**，并接入 GitHub Actions 自动编译 / 发布。
+Adds **automatic track recognition on import**, **hover tooltips**, and GitHub Actions build / release automation.
+
+### ✨ 新增 / Added
+- **音轨自动识别导入**：分轨模式下随意导入一条音轨（浏览或拖放），自动识别它属于哪个声道并放入对应输入框，
+  同时扫描同目录同组的其它声道一并导入。例如点任意一行的「浏览…」选择 `Movie.FL.wav`，会放入 **L**，
+  并自动导入 `Movie.FR / FC / LFE / SL / SR / BL / BR`。
+  *Import any single track (browse or drag & drop): its channel is recognized, it lands in the right row, and the rest of its group in the folder is imported automatically.*
+- **多种声道命名识别**：标准写法（`L/R/C/LFE/Ls/Rs/Lss/Rss/Lsr/Rsr/Lrs/Rrs/Lb/Rb/Cs/S/Lw/Rw/Lh/Rh/Lhs/Rhs/Oh/Ch/Lt/Rt`）、
+  ffmpeg/SMPTE 写法（`FL/FR/FC/LFE/SL/SR/BL/BR/BC/TFL/TFR/TC`）、英文全称（`Left`、`Sub`、`Left Surround`、`Rear Right`、`Front_Left`…）、
+  中文（`左/右/中置/重低音/左环绕/右后`…）；分隔符 `_ - . 空格 () []` 均可，声道标记后可带后缀（`Movie_L_48k_24bit.wav`），
+  也支持无分隔符的 `MovieFL.wav`。
+  *Recognizes standard, ffmpeg/SMPTE, English-word and Chinese channel names, any common separator, trailing suffixes and separator-less names.*
+- **声道布局自动识别**：按识别到的声道集合自动切换到最匹配的声道布局（如 FL/FR/FC/LFE/SL/SR/BL/BR → 7.1 Lss/Rss/Lsr/Rsr，
+  L/R → 2.0）；单文件输入按 WAV `dwChannelMask` / 声道数自动选择布局。编码页新增「自动识别声道布局」开关（默认开启，持久化）。
+  *The channel layout follows the recognized channels (or the WAV channel mask for single-file input); toggle on the Encode page.*
+- **智能输入模式切换**：分轨模式拖入多声道 WAV 自动切到单文件输入；单文件模式拖入分轨声道文件自动切到分轨输入。
+  *Dropping a multichannel WAV in split mode switches to single-file input, and vice versa.*
+- **鼠标悬浮提示**：编码页 / StreamTools / 设置页的按钮、输入框、下拉框与选项均提供中英双语说明；
+  声道标签悬浮显示该声道支持的全部文件名写法；StreamTools 各标签页悬浮显示功能说明。设置页新增「鼠标悬浮提示」开关（实时生效）。
+  *Bilingual hover tooltips across all pages; channel labels list the names they recognize; toggle in Settings.*
+- **GitHub Actions 自动编译**：每次推送自动编译 win-x64 单文件自包含 exe 并上传构建产物；合并到 `main` 或推送 `v*` 标签时
+  按版本号自动创建 Release（发布说明取自本更新日志）。
+  *CI builds the win-x64 single-file exe on every push and publishes a Release for new versions on `main` / `v*` tags.*
+
+### 🔧 优化 / Improved
+- 导入日志显示每个声道的识别结果，以及仍未导入的声道。
+  *The log lists each recognized channel and any channels still missing.*
+- 修复旧版无分隔符匹配会把 `Final.wav` 之类文件误判为 L 声道的问题（现要求大小写边界）。
+  *Separator-less matching no longer mistakes names like `Final.wav` for the L channel.*
+- Linux 下无 GLX 时回退软件渲染，避免启动崩溃。
+  *Falls back to software rendering on Linux when GLX is unavailable.*
+- README 补充从源码构建所需的 Avalonia-Fluent-UI 源码步骤。
+  *README now documents fetching the Avalonia-Fluent-UI source for local builds.*
+
+---
+
 ## [1.0.2] - 2026-07-15
 
 新增**实时中英双语切换**，并补齐 StreamTools 元数据面板功能。
@@ -63,5 +102,7 @@ Focus on **cross-machine compatibility**, **resolution/DPI adaptivity**, **encod
 - 首个公开版本：DTS-HD Master Audio 编码 GUI（音频编码 / 比特流元数据 / 下混 / 队列 / StreamTools）。
   *Initial public release: DTS-HD Master Audio encoding GUI.*
 
+[1.1.0]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases/tag/v1.1.0
+[1.0.2]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
 [1.0.1]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
 [1.0.0]: https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases
