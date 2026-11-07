@@ -324,7 +324,7 @@
             <!-- ========== 比特流 (Bitstream / 元数据) ==========
                  移除外层"启用"勾选：该开关仅影响 UI 透明度，不影响 .cfg 生成。
                  按 Java GUI 行为：内层各项默认勾选状态决定是否写入 .cfg。 -->
-            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ContentTransition="{x:Null}">
                 <Expander.Header>
                     <TextBlock Text="{DynamicResource Lang.Encode.SectionBitstream}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
                 </Expander.Header>
@@ -434,7 +434,7 @@
             <!-- ========== 下混 (Downmix) ==========
                  移除外层"启用"勾选：该开关仅影响 UI 透明度，不影响 .cfg 生成。
                  按 Java GUI 行为：6.x/7.x 布局强制启用 5.1 下混矩阵，5.1 及以下默认关闭。 -->
-            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" ContentTransition="{x:Null}">
                 <Expander.Header>
                     <TextBlock Text="{DynamicResource Lang.Encode.SectionDownmix}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
                 </Expander.Header>

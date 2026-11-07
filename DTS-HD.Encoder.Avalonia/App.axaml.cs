@@ -26,6 +26,7 @@ public partial class App : Application
         // 按持久化设置初始化界面语言（简体中文 / 英文，默认跟随系统），
         // 必须在创建主窗口之前，保证首帧即为正确语言。
         LocalizationManager.Initialize(AppServices.Settings.Language);
+        Controls.PageHost.AnimationsEnabled = AppServices.Settings.PageTransitionEnabled;
 
         // 后台初始化引擎并预连接（不阻塞 UI；编码页用圆形加载图显示连接进度）
         _ = AppServices.InitEngineAsync();

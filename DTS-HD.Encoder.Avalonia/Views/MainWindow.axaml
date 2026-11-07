@@ -8,6 +8,7 @@
     xmlns:view="clr-namespace:AvaloniaFluentUI.Windowing;assembly=AvaloniaFluentUI"
     xmlns:ani="clr-namespace:AvaloniaFluentUI.Media.Animation;assembly=AvaloniaFluentUI"
     xmlns:vm="using:DTSHD.Encoder.Avalonia.ViewModels"
+    xmlns:ctl="using:DTSHD.Encoder.Avalonia.Controls"
     Title="DTS-HD Master Audio Suite"
     Width="1280" Height="800" MinWidth="960" MinHeight="640"
     WindowStartupLocation="CenterScreen"
@@ -55,11 +56,9 @@
             </fui:NavigationViewItem>
         </fui:NavigationView.MenuItems>
         <fui:NavigationView.Content>
-            <!-- 页面切换动画：SlideUp + FadeIn（FromVerticalOffset=28, Duration=0.8s）。
-                 位移幅度从 100 调小到 28，减少每帧重绘区域，避免大子树动画掉帧。
-                 性能优化在 StackContent.AnimateContent() 中：动画期间给 ContentPresenter 加
-                 RenderTransform + IsHitTestVisible=false，让位移走 GPU 合成层而非每帧触发布局 pass。 -->
-            <fui:StackContent Content="{Binding CurrentViewModel}"/>
+            <!-- 页面宿主（替代 fui:StackContent）：页面只创建一次并常驻；切换动画对页面快照做
+                 渲染线程合成动画，4K/144Hz 下不掉帧。动画开关见设置页（默认关闭）。详见 Controls/PageHost.cs -->
+            <ctl:PageHost Page="{Binding CurrentViewModel}"/>
         </fui:NavigationView.Content>
     </fui:NavigationView>
 </view:AppWindow>

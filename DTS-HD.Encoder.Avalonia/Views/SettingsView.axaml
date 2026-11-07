@@ -111,6 +111,12 @@
                                       ItemsSource="{Binding ThemeOptions}"
                                       SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.Theme}"/>
                         </StackPanel>
+                        <!-- 页面切换动画开关 -->
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{DynamicResource Lang.Settings.PageTransition}"/>
+                            <ToggleSwitch OnContent="{DynamicResource Lang.Settings.On}" OffContent="{DynamicResource Lang.Settings.Off}"
+                                          IsChecked="{Binding PageTransitionEnabled, Mode=TwoWay}" ToolTip.Tip="{DynamicResource Tip.PageTransition}"/>
+                        </StackPanel>
                         <!-- 鼠标悬浮提示开关 -->
                         <StackPanel Spacing="4">
                             <TextBlock Text="{DynamicResource Lang.Settings.ShowToolTips}"/>

@@ -264,4 +264,6 @@
     <sys:String x:Key="Tip.CheckUpdate">查询 GitHub 上的最新发布版本</sys:String>
     <sys:String x:Key="Tip.OpenDownload">在浏览器中打开新版本下载页</sys:String>
     <sys:String x:Key="Tip.AutoCheckUpdate">启动时自动检查新版本，仅在发现更新时提示</sys:String>
+    <sys:String x:Key="Lang.Settings.PageTransition">页面切换动画</sys:String>
+    <sys:String x:Key="Tip.PageTransition">开启后切换页面时播放短暂的上滑淡入动画（先对新页面拍快照，再由 GPU 合成层播放，4K / 高刷新率下也不掉帧）</sys:String>
 </ResourceDictionary>

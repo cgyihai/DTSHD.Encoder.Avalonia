@@ -6,7 +6,7 @@
 *A modern GUI encoder front-end for DTS-HD Master Audio Suite*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.1.1-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.2-success.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/releases)
 [![Build](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml/badge.svg)](https://github.com/cgyihai/DTSHD.Encoder.Avalonia/actions/workflows/build.yml)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![Avalonia](https://img.shields.io/badge/Avalonia-12.0.3-8b44ac.svg)](https://avaloniaui.net/)
@@ -84,6 +84,7 @@
 #### 🖥️ 体验与稳定性
 - **分辨率 / DPI 自适应** — 按显示器缩放正确换算窗口尺寸，1080p / 高分屏 / 缩放屏均不再过大或超出屏幕
 - **刷新率自适应** — 跟随显示器 vsync（144Hz 显示器即 144fps，不锁 60）
+- **流畅的页面切换** — 页面只创建一次并常驻；可选的切换动画采用"快照 + 渲染线程合成动画"，4K / 144Hz 下不掉帧（设置页开关，默认关闭）
 - **矢量图标** — 导航图标内嵌矢量路径，任何系统（含精简版 Win10 / Server）都不会出现图标空白
 - **鼠标悬浮提示** — 按钮、输入框、下拉框、选项均有中英双语说明；声道标签悬浮可查看该声道支持的全部文件名写法；设置页可一键关闭
 - **实时双语切换** — 简体中文 / 英文，设置页一键切换、免重启即时生效
@@ -228,6 +229,7 @@ EncoderProfiles/          ← 编码设置档（自动生成）
 #### 🖥️ Experience & Stability
 - **Resolution / DPI adaptive** window sizing (no more oversized windows on 1080p or scaled displays)
 - **Refresh-rate adaptive** rendering (follows display vsync)
+- **Smooth page switching** — pages are created once; the optional transition animates a snapshot on the compositor thread, smooth at 4K / 144 Hz (toggle in Settings, off by default)
 - **Vector icons** — never blank, even on stripped Windows 10 / Server
 - **Hover tooltips** on buttons, fields and options (Chinese / English); hover a channel label to see every file-name tag it recognizes; can be turned off in Settings
 - **Real-time bilingual UI** — Simplified Chinese / English, switch from Settings with no restart

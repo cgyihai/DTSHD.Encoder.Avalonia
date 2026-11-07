@@ -26,6 +26,8 @@ public sealed class AppSettings
     public bool AutoDetectChannelLayout { get; set; } = true;
     /// <summary>显示鼠标悬浮提示（默认开启）。</summary>
     public bool ShowToolTips { get; set; } = true;
+    /// <summary>页面切换动画（默认关闭；开启时使用快照 + 合成层动画，不影响流畅度）。</summary>
+    public bool PageTransitionEnabled { get; set; } = false;
 
     private static string ConfigPath =>
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
